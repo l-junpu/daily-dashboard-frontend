@@ -1,0 +1,36 @@
+.dashboard-container {
+  display: grid;
+  grid-template-columns: 70px 1fr;
+  grid-template-rows: 1vh 1fr;
+  height: 100vh;
+  width: 100vw;
+}
+
+.left-sidebar {
+  grid-column: 1;
+  grid-row: 1 / 3;
+  background-color: lightblue;
+}
+
+.top-content {
+  grid-column: 2;
+  grid-row: 1;
+  display: grid;
+  grid-template-rows: 60px 60px 1fr;
+  height: 100vh;
+}
+
+.top-bar {
+  grid-row: 1;
+  background-color: lightgreen;
+}
+
+.second-top-bar {
+  grid-row: 2;
+  background-color: lightyellow;
+}
+
+.main-content {
+  grid-row: 3;
+  background-color: lightgray;
+}
