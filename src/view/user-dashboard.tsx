@@ -3,13 +3,7 @@ import "./user-dashboard.css";
 import TaskSection from "../component/task-section/task-section";
 
 const UserDashboardView = () => {
-  const weekdays = [
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday"
-  ]
+  const weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 
   return (
     <div className="dashboard-container">
@@ -20,7 +14,7 @@ const UserDashboardView = () => {
         <div className="main-content">
           <div className="card-view">
             {weekdays.map((day_string, index) => (
-              <TaskSection day={day_string} />
+              <TaskSection key={index} day={day_string} />
             ))}
           </div>
           <div className="member-view">Member View</div>

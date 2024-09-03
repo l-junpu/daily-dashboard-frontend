@@ -1,61 +1,34 @@
-import { useState } from "react";
 import LabelButton from "../label-button/label-button";
 
-import { MenuButton } from "../menu-button/menu-button";
+import MenuButton from "../menu-button/menu-button";
 
-import "./scroll-list.css"
+import "./scroll-list.css";
 
-// Component Props
-interface ScrollbarProps {
-    // Placeholder String
-    placeholder?: string;
-
-    // List of Values displayed as LabelButtons
-    values: string[];
-    disabled?: boolean;
-    // Callback that triggers on LabelButton click
-    onSelect?: (username: string, title: string) => void;
-    OnHamburgerButtonClick?: (command: string, title: string) => void;
+interface ScrollListProps {
+  placeholder?: string;
+  values: string[];
+  disabled?: boolean;
+  // Callback that triggers on LabelButton click
+  onDoubleClick?: () => void;
+  enableMenu?: boolean;
+  onMenuButtonClick?: (command: string, title: string) => void;
 }
 
-// Scrollbar Component
-const ScrollList = ({ placeholder, values, disabled, onSelect, OnHamburgerButtonClick }: ScrollbarProps) => {
-    const [activeButton, setActiveButton] = useState("");
+const ScrollList = ({ placeholder, values, disabled, onDoubleClick, enableMenu, onMenuButtonClick }: ScrollListProps) => {
+  const printString = () => {
+    console.log("Menu clicked");
+  };
 
-    // Handle the onClick event when a LabelButton is clicked
-    const handleOnClick = (username: string, title: string) => {
-        if (onSelect != undefined) {
-            // Call the onClick Callback Function
-            onSelect(username, title);
-            // Enable "active" className for "title"
-            setActiveButton(title);
-        }
-
-    };
-
-    return (
-        <div className="scrollbarStyle">
-            <div>
-                {values ? (
-                    /*
-                    For all Values within "values", generate a LabelButton 
-                    and assign a Callback Function to it "onClick"
-                  */
-                    values.map((titleName, index) => (
-                        <div className="verticalStyle">
-                            <LabelButton
-                                key={index}
-                                name={titleName}
-                                disabled={disabled}
-                            />
-                        </div>
-                    ))
-                ) : (
-                    <p>{placeholder}</p>
-                )}
-            </div>
+  return (
+    <div className="scroll-list">
+      {values.map((taskContent, index) => (
+        <div key={index} className="scroll-button-container">
+          <LabelButton name={taskContent} disabled={disabled} cssProps="scroll-button" />
+          {/* {enableMenu && <MenuButton name="..." buttonList={["Open note", "Delete note"]} onButtonClick={printString} cssProps="delete-button" />} */}
         </div>
-    );
+      ))}
+    </div>
+  );
 };
 
 export default ScrollList;
