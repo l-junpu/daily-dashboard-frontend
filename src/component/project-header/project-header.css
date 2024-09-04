@@ -1,0 +1,13 @@
+.project-header-container {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+
+.project-header-left-button {
+  margin-right: 15px;
+}
+
+.project-header-right-button {
+  margin-right: calc(15px + 250px);
+}

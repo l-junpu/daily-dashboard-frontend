@@ -17,25 +17,7 @@ interface TaskSectionProps {
 
 const TaskSection = ({ day }: TaskSectionProps) => {
   let tasks: string[] = [
-    "Updated the asddasd",
-    "Updated the asddasd",
-    "Updated the asddasd",
-    "Updated the asddasd",
-    "Updated the asddasd",
-    "Updated the asddasd",
-    "Updated the asddasd",
-    "Updated the asddasd",
-    "Updated the asddasd",
-    "Updated the asddasd",
-    "Updated the asddasd",
-    "Updated the asddasd",
-    "Updated the asddasd",
-    "Updated the asddasd",
-    "Updated the asddasd",
-    "Updated the asddasd",
-    "Updated the asddasd",
-    "Updated the asddasd",
-    "Updated the asddasd",
+    "Updated the asddasdUpdated the asddasdUpdated the asddasdUpdated the asddasdUpdated the asddasdUpdated the asddasdUpdated the asddasdUpdated the asddasdUpdated the asddasd",
     "Updated the asddasd",
     "Updated the asddasd",
   ];
@@ -52,7 +34,11 @@ const TaskSection = ({ day }: TaskSectionProps) => {
         <LabelButton name="Q" cssProps="task-container-search-button" />
       </div>
       <div className="task-container-body">
-        <ScrollList values={tasks} enableMenu={true} onMenuButtonClick={printString} />
+        <ScrollList
+          values={tasks}
+          enableMenu={true}
+          onMenuButtonClick={printString}
+        />
       </div>
     </div>
   );

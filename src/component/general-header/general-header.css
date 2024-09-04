@@ -1,0 +1,21 @@
+.general-header-home-button {
+  margin-left: 15px;
+}
+
+.general-header-search-bar {
+  margin-left: 15px;
+}
+
+.general-header-right-container {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+
+.general-header-add-button {
+  margin-right: 15px;
+}
+
+.general-header-alert-button {
+  margin-right: 15px;
+}

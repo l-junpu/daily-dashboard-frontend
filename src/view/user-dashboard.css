@@ -23,11 +23,15 @@
 
 .top-bar {
   grid-row: 1;
+  display: flex;
+  align-items: center;
   background-color: lightgreen;
 }
 
 .second-top-bar {
   grid-row: 2;
+  display: flex;
+  align-items: center;
   background-color: lightyellow;
 }
 

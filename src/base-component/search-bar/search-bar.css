@@ -1,0 +1,15 @@
+.search-bar-container {
+  background-color: lightcoral;
+  display: flex;
+}
+
+.search-bar {
+  border-radius: 0px;
+  margin: 0px;
+  flex: 1;
+}
+
+.search-button {
+  border-radius: 0px;
+  margin: 0px;
+}
