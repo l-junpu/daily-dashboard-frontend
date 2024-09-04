@@ -7,7 +7,8 @@
   margin: 20px 0px 20px 20px;
 
   /*100vh - top-bar-height - second-top-bar-height - padding-for-task-container*/
-  max-height: calc(100vh - 70px - 70px);
+  /* max-height: calc(100vh - 70px - 70px); */
+  max-height: 365px;
 }
 
 .task-container:last-child {
@@ -46,7 +47,8 @@
 .task-container-body {
   display: flex;
   flex-direction: column;
-  flex: 1;
+  /* flex: 1; */
+  max-height: 265px;
   background-color: lightsteelblue;
   overflow-y: auto;
 }

@@ -20,6 +20,9 @@ const TaskSection = ({ day }: TaskSectionProps) => {
     "Updated the asddasdUpdated the asddasdUpdated the asddasdUpdated the asddasdUpdated the asddasdUpdated the asddasdUpdated the asddasdUpdated the asddasdUpdated the asddasd",
     "Updated the asddasd",
     "Updated the asddasd",
+    "Updated the asddasd",
+    "Updated the asddasd",
+    "Updated the asddasd",
   ];
 
   const printString = (x: string, y: string) => {
@@ -34,11 +37,7 @@ const TaskSection = ({ day }: TaskSectionProps) => {
         <LabelButton name="Q" cssProps="task-container-search-button" />
       </div>
       <div className="task-container-body">
-        <ScrollList
-          values={tasks}
-          enableMenu={true}
-          onMenuButtonClick={printString}
-        />
+        <ScrollList values={tasks} enableMenu={true} onMenuButtonClick={printString} />
       </div>
     </div>
   );
