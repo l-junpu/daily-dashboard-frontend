@@ -71,6 +71,13 @@
   margin-top: 5px;
 }
 
+.login-container .success-message {
+  color: green;
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 5px;
+}
+
 .login-container .register-link {
   font-size: 14px;
   text-align: center;

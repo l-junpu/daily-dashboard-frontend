@@ -1,0 +1,16 @@
+.icon-button-hover-text {
+  display: inline-block; /* Ensures the background covers the entire text */
+  background-color: aliceblue; /* Semi-transparent background */
+  color: rgb(0, 0, 0); /* Text color */
+  padding: 4px 8px; /* Padding around the text */
+  border-radius: 10px; /* Rounded corners */
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  position: absolute; /* To position it relative to the button */
+  top: 50%; /* Aligns the hover text vertically with the button */
+  left: 100%; /* Positions the hover text to the right of the button */
+  transform: translateY(calc(-50% + 0.325rem)); /* Centers the text vertically with the button - 0.3rem because of button size*/
+  white-space: nowrap; /* Ensures the text stays on one line */
+  z-index: 10; /* Ensures the text appears above other elements */
+  margin-left: -5px; /* Adds some space between the button and the hover text */
+  font-weight: 600;
+}

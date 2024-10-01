@@ -1,66 +1,145 @@
 import "./user-dashboard.css";
 
-import TaskSection from "../component/task-section/task-section";
-import GeneralHeader from "../component/general-header/general-header";
-import ProjectHeader from "../component/project-header/project-header";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-import Calendar from "react-calendar";
-import { useState } from "react";
+import IconButton from "../base-component/icon-button/icon-button";
+import TaskCard, { TaskCardProps } from "../base-component/task-card/task-card";
+import CreateTaskCard from "../base-component/create-task/create-task";
 
 const UserDashboardView = () => {
-  const [date, setDate] = useState(new Date());
-  const weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+  const navigate = useNavigate();
 
-  const getWeekNumber = (date: Date) => {
-    const oneJan = new Date(date.getFullYear(), 0, 1);
-    return Math.ceil(((date.getTime() - oneJan.getTime()) / 86400000 + oneJan.getDay() + 1) / 7);
-  };
+  const [username, setUsername] = useState<string | null>(null);
 
-  const isCurrentWeek = (date: Date) => {
-    const currentWeek = getWeekNumber(new Date());
-    const dateWeek = getWeekNumber(date);
-    return currentWeek === dateWeek;
-  };
+  const [createTask, setCreateTask] = useState(false);
+  const [newTaskTitle, setNewTaskTitle] = useState("");
+  const [newTaskDescription, setNewTaskDescription] = useState("");
+  const [newTaskTags, setNewTaskTags] = useState<string[]>([]);
+  const [newTaskStatus, setNewTaskStatus] = useState(false);
 
-  const isWeekday = (date: Date) => {
-    const day = date.getDay();
-    return day >= 1 && day <= 5; // Monday to Friday
-  };
+  const [searchText, setSearchText] = useState("");
+  const [completionStatus, setCompletionStatus] = useState<boolean | null>(null);
+
+  // Retrieve necessary information on initial mount
+  useEffect(() => {
+    const storedUsername = sessionStorage.getItem("username");
+    if (storedUsername) {
+      setUsername(storedUsername);
+    }
+  }, []);
+
+  // Retrieve tasks on username update
+  useEffect(() => {
+    if (username) {
+      console.log("Username retrieved: ", username);
+      // grab all the tasks here
+    }
+  }, [username]);
+
+  // Sample description - For testing
+  const [tasks, setTasks] = useState<TaskCardProps[]>([
+    {
+      taskId: 1,
+      title: "Task 1",
+      description: "Description for Task 1",
+      tags: ["tag", "tag"],
+      status: true,
+      lastModified: "start",
+      createdOn: "end",
+    },
+    { taskId: 2, title: "Task 2", description: "Description for Task 2", tags: ["tag"], status: true, lastModified: "start", createdOn: "end" },
+    { taskId: 3, title: "Task 3", description: "Description for Task 3", tags: ["tag"], status: false, lastModified: "start", createdOn: "end" },
+    { taskId: 4, title: "Task 4", description: "Description for Task 4", tags: ["tag"], status: false, lastModified: "start", createdOn: "end" },
+    { taskId: 5, title: "Task 5", description: "Description for Task 5", tags: ["tag"], status: false, lastModified: "start", createdOn: "end" },
+  ]);
+
+  // Perform sorting of tasks based on Status
+  const filteredStatusTasks = tasks.filter((task) => completionStatus == null || completionStatus == task.status);
+  const filteredSearchTasks = filteredStatusTasks.filter(
+    (task) => task.title.toLowerCase().includes(searchText.toLowerCase()) || task.description.toLowerCase().includes(searchText.toLowerCase())
+  );
 
   return (
     <div className="dashboard-container">
-      <div className="left-sidebar">Left Sidebar</div>
-      <div className="top-content">
-        <div className="top-bar">
-          <GeneralHeader />
+      {/* Dashboard Header */}
+      <header className="dashboard-header">HEADER</header>
+      <div className="dashboard-body">
+        {/* Redirection to the 2 main applications */}
+        <nav className="primary-navbar">
+          <IconButton primaryText="📋" hoverText="Tasks" cssStyle="button" onClick={() => {}} />
+          <IconButton primaryText="💻" hoverText="LLM" cssStyle="button" onClick={() => {}} />
+        </nav>
+
+        {/* Redirections to the different Task pages */}
+        <div className="secondary-navbar">
+          <IconButton primaryText="📋 All Tasks" cssStyle="button" onClick={() => setCompletionStatus(null)} />
+          <IconButton primaryText="⚠️ In Progress" cssStyle="button" onClick={() => setCompletionStatus(false)} />
+          <IconButton primaryText="✅ Completed" cssStyle="button" onClick={() => setCompletionStatus(true)} />
+          <IconButton primaryText="⚙️ User Analytics" cssStyle="button" onClick={() => {}} />
         </div>
-        <div className="second-top-bar">
-          <ProjectHeader />
-        </div>
-        <div className="main-content">
-          <div className="card-view-wrapper-with-calendar">
-            <div className="card-view">
-              {weekdays.map((day_string, index) => (
-                <TaskSection key={index} day={day_string} />
-              ))}
-            </div>
-            <div className="calendar-view">
-              <Calendar
-                className="calendar-style"
-                value={date}
-                /* Checks whether date == today and returns either "calendar-highlight-week" or "calendar-highlight-day" or "" as the cssStyle depending on the conditions */
-                /* Wrap this whole thing into a function later so I can create a rounding effect */
-                tileClassName={({ date }) => {
-                  const today = new Date();
-                  const isToday = date.getDate() === today.getDate() && date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear();
-                  return isCurrentWeek(date) && isWeekday(date) && !isToday ? "calendar-highlight-week" : isToday ? "calendar-highlight-day" : "";
-                }}
+
+        {/* Main Task Contents */}
+        <main className="dashboard-contents">
+          {/* Main Task Header */}
+          <div className="header">
+            <input type="text" placeholder="Search tasks..." value={searchText} className="search-bar" onChange={(e) => setSearchText(e.target.value)} />
+            <IconButton primaryText="╋" hoverText="Add Task" cssStyle="add-button" hoverCssStyle="add-button-hover" onClick={() => setCreateTask(true)} />
+          </div>
+          {/* Change This Header Accordingly */}
+          <h2 style={{ textAlign: "left", margin: "0.5rem", textDecoration: "underline", fontSize: "30px" }}>All Tasks</h2>
+          {/* Main Task Cards */}
+          <div className="task-grid">
+            {filteredSearchTasks.map((task) => (
+              <TaskCard key={task.taskId} {...task} />
+            ))}
+          </div>
+        </main>
+      </div>
+      {/* Create New Task Page */}
+      {createTask && (
+        <div className="create-task-container">
+          <div className="new-task-contents">
+            <h3 className="title">Create New Task</h3>
+            <h4>Title</h4>
+            <input type="text" placeholder="Task Title" className="title" value={newTaskTitle} onChange={(e) => setNewTaskTitle(e.target.value)} />
+            <h4>Description</h4>
+            <input
+              type="text"
+              placeholder="Task Description"
+              value={newTaskDescription}
+              onChange={(e) => setNewTaskDescription(e.target.value)}
+              className="description"
+            />
+            <h4>Tags</h4>
+            <div className="tags">
+              <div className="container">
+                {newTaskTags.map((tag, index) => (
+                  <span key={index} className="tag">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+              <input
+                type="text"
+                placeholder="Task Description"
+                value={newTaskDescription}
+                onChange={(e) => setNewTaskDescription(e.target.value)}
+                className="add"
               />
+              <button onClick={() => {}}>Add Tag</button>
+            </div>
+            <div className="footer">
+              <button onClick={() => setCreateTask(false)} className="create-button">
+                Create Task
+              </button>
+              <button onClick={() => setCreateTask(false)} className="cancel-button">
+                Cancel
+              </button>
             </div>
           </div>
-          <div className="member-view">Member View</div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

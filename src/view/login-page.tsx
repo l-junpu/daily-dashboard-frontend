@@ -10,13 +10,17 @@ const LoginPageView = () => {
   const navigate = useNavigate();
 
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [register, setRegister] = useState(false);
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const handleLoginOrRegister = async () => {
+  const handleLoginOrRegister = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setSuccess("");
+
     var api: string = "";
 
     if (register) {
@@ -38,47 +42,65 @@ const LoginPageView = () => {
 
     if (response == null) {
       setError("Unable to connect to server");
-    } else {
-      setError("");
-      const status: boolean = response;
-
-      if (!status) {
-        setError("Incorrect username or password");
-        return;
-      }
-
-      navigate(`/dashboard?username=${username}`, { replace: true });
     }
-    console.log(response);
+
+    const status: boolean = response;
+
+    if (!status) {
+      setError("Incorrect username or password");
+      return;
+    }
+
+    setError("");
+    if (register) {
+      setSuccess("Successfully registered");
+      setRegister(false);
+      return;
+    }
+
+    localStorage.setItem("username", username);
+    sessionStorage.setItem("username", username);
+    navigate("/dashboard", { replace: true });
   };
 
   return (
+    // Container for the entire login or registration form
     <div className="login-container">
-      <form>
+      {/* Form element that handles submission with the handleLoginOrRegister function */}
+      <form onSubmit={(e) => handleLoginOrRegister(e)}>
+        {/* Header that dynamically changes between "Register" and "Login" based on the register state */}
         <h1>{register ? "Register" : "Login"}</h1>
-
+        {/* Input field for the username */}
         <div className="login-input-box">
-          <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Username" required />
+          <input name="username" type="text" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Username" required />
           <FaUser className="login-icon" />
         </div>
-
+        {/* Input field for the password */}
         <div className="login-input-box">
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" required />
+          <input name="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" required />
           <FaLock className="login-icon" />
         </div>
-
+        {/* Conditional input field for confirming the password during registration */}
         {register && (
           <div className="login-input-box">
-            <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Confirm Password" />
+            <input
+              name="confirm"
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="Confirm Password"
+              required
+            />
             <FaLock className="login-icon" />
           </div>
         )}
-
-        <button type="submit" onClick={() => handleLoginOrRegister()}>
-          {register ? "Register" : "Login"}
-        </button>
+        {/* Submit button with dynamic text based on the register state */}
+        <button type="submit">{register ? "Register" : "Login"}</button>
+        {/* Display error messages */}
         <div className="error-message">{error}</div>
-
+        {/* Display success messages */}
+        <div className="success-message">{success}</div>
+        {/* Link to toggle between login and registration */}
         <div className="register-link">
           <p>
             {register ? "Already have an account? " : "Don't have an account? "}
