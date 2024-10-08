@@ -1,0 +1,102 @@
+.secondary-navbar .button-text-wrap {
+  display: block;
+  text-wrap: nowrap;
+  overflow-x: hidden; /* Apply overflow to the inner span */
+  text-overflow: ellipsis; /* Optional: Add an ellipsis for truncated text */
+  white-space: nowrap; /* Ensure text does not wrap */
+}
+
+.secondary-navbar .chat-history {
+  flex: 1;
+  overflow-y: scroll;
+}
+
+.dashboard-body .llm-dashboard-contents {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+
+  background-color: rgba(109, 125, 214, 0.1);
+  border: 1px solid rgb(0, 0, 0, 0.2);
+  border-left: none;
+  height: 100%;
+}
+
+.llm-dashboard-contents .conversation-container {
+  flex: 1;
+  /* 100% - Footer - Margin (Top + Bot 20px) */
+  max-height: calc(100% - 4rem - 40px);
+  margin: 20px;
+  display: flex;
+  overflow-y: auto;
+  width: 100%;
+  justify-content: center;
+}
+
+.conversation-container .chat-zone {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-zone .chat {
+  padding: 20px;
+  text-align: left;
+}
+
+.chat-zone .chat.user {
+  background-color: rgb(75, 73, 172, 0.3);
+  border-radius: 20px;
+  max-width: 80%;
+  align-self: flex-end;
+}
+
+.llm-dashboard-contents .footer {
+  background-color: rgba(88, 63, 92, 0.1);
+  display: flex;
+  align-items: end;
+  padding: 10px;
+  margin-bottom: 15px;
+  width: 100%;
+  gap: 10px;
+  max-width: max(50vw, 900px);
+  border-radius: 40px;
+  height: fit-content;
+}
+
+.footer .prompt-search {
+  flex: 1;
+  resize: none;
+  overflow: auto;
+  padding: 0px 20px 0 20px;
+  min-height: 20px;
+  max-height: 250px;
+  border: none;
+  background: none;
+}
+
+.footer .prompt-search:focus {
+  border: none;
+  outline: none;
+}
+
+.footer .submit {
+  border-radius: 40px;
+  padding: 0px;
+  width: 50px;
+  height: 50px;
+  background-color: rgba(88, 63, 92, 0.1);
+  color: rgb(0, 0, 0, 0.2);
+  transition: 0.3s;
+}
+
+.footer .submit.ok {
+  border-radius: 40px;
+  padding: 0px;
+  width: 50px;
+  height: 50px;
+  background-color: rgba(88, 63, 92, 0.2);
+  color: rgb(0, 0, 0, 0.7);
+}

@@ -237,17 +237,26 @@ const UserDashboardView = () => {
         {/* Redirection to the 2 main applications */}
         <nav className="primary-navbar">
           <IconButton primaryText="📋" hoverText="Tasks" cssStyle="button primary-selected" onClick={() => {}} />
-          <IconButton primaryText="💻" hoverText="LLM" cssStyle="button" onClick={() => {}} />
+          <IconButton
+            primaryText="💻"
+            hoverText="LLM"
+            cssStyle="button"
+            onClick={() => {
+              navigate("/dashboard/llm/conversations", { replace: true });
+              console.log("wew");
+            }}
+          />
         </nav>
 
         {/* Redirections to the different Task pages */}
-        <div className="secondary-navbar">
+        <nav className="secondary-navbar">
+          <p className="prefix">DASHBOARD</p>
           {secondaryButtonProps.map((button, index) => (
             <button key={index} className={selectedSecondaryButton === index ? "selected-button" : "button"} onClick={() => button.onClick(index)}>
               {button.text}
             </button>
           ))}
-        </div>
+        </nav>
 
         {/* Main Task Contents */}
         <main className="dashboard-contents">
