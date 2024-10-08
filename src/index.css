@@ -11,6 +11,10 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  --color-primary: #4b49ac;
+  --color-secondary: #98bdff;
+  --color-off-white: #faf9f6;
 }
 
 * {
@@ -47,20 +51,26 @@ h1 {
 button {
   border-radius: 8px;
   border: 1px solid transparent;
-  padding: 0.6em 1.2em;
+  padding: 1.1em 1em;
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: antiquewhite;
   cursor: pointer;
-  transition: border-color 0.25s;
+  transition: 0.3s;
 }
 button:hover {
   border-color: #646cff;
 }
-button:focus,
+/* button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
+} */
+
+input,
+textarea {
+  font-family: "Helvetica Neue", Helvetica, sans-serif;
+  font-size: 16px;
 }
 
 @media (prefers-color-scheme: light) {

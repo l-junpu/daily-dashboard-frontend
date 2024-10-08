@@ -60,7 +60,7 @@ const LoginPageView = () => {
 
     localStorage.setItem("username", username);
     sessionStorage.setItem("username", username);
-    navigate("/dashboard", { replace: true });
+    navigate("/dashboard/tasks", { replace: true });
   };
 
   return (
