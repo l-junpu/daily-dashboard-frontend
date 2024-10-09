@@ -1,9 +1,9 @@
 .secondary-navbar .button-text-wrap {
   display: block;
   text-wrap: nowrap;
-  overflow-x: hidden; /* Apply overflow to the inner span */
-  text-overflow: ellipsis; /* Optional: Add an ellipsis for truncated text */
-  white-space: nowrap; /* Ensure text does not wrap */
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .secondary-navbar .chat-history {

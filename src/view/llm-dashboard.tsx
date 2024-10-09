@@ -10,6 +10,7 @@ import TextArea from "../base-component/text-area/text-area";
 // For Secondary Navbar
 interface ButtonProps {
   text: string;
+  onClick: () => void;
 }
 
 // For Conversation Display
@@ -73,8 +74,16 @@ const LLMDashboardView = () => {
   ]);
 
   // Active Buttons
-  const secondaryButtonProps: ButtonProps[] = [{ text: "📋 Create A New Chat" }, { text: "🔍 View Embeddings" }, { text: "⚙️ Add Embeddings" }];
-  const [selectedSecondaryButton, setSelectedSecondaryButton] = useState(-1);
+  const secondaryButtonProps: ButtonProps[] = [
+    { text: "📋 Conversations", onClick: () => {} },
+    {
+      text: "⚙️ Add Embeddings",
+      onClick: () => {
+        navigate("/dashboard/llm/upload-docs", { replace: true });
+      },
+    },
+  ];
+  const [selectedSecondaryButton, setSelectedSecondaryButton] = useState(0);
   const [selectedConversationButton, setSelectedConversationButton] = useState(-1);
 
   // Retrieve necessary information on initial mount
@@ -125,11 +134,7 @@ const LLMDashboardView = () => {
           <p className="prefix">DASHBOARD</p>
           <div style={{ marginBottom: "6px" }}>
             {secondaryButtonProps.map((button, index) => (
-              <button
-                key={index}
-                className={selectedSecondaryButton === index ? "selected-button" : "button"}
-                onClick={() => setSelectedSecondaryButton(index)}
-              >
+              <button key={index} className={selectedSecondaryButton === index ? "selected-button" : "button"} onClick={button.onClick}>
                 {button.text}
               </button>
             ))}
