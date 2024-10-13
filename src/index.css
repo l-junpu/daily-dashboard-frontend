@@ -41,7 +41,8 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
-  background: url("../assets/background.jpg") no-repeat;
+  /* background: url("../assets/background.jpg") no-repeat; */
+  background-color: var(--color-off-white);
   background-size: cover;
   background-position: center;
 }
