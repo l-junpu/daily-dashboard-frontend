@@ -35,12 +35,12 @@
   width: 3.7rem;
   height: 3.7rem;
   margin: 0.65rem 0.65rem 0 0.65rem;
-  background-color: rgba(255, 255, 255, 0.04);
-  border: 2px solid rgb(0, 0, 0, 0.2);
+  background-color: var(--color-off-white);
+  border: 1px solid rgb(0, 0, 0, 0.1);
 }
 
 .primary-navbar .primary-selected {
-  background-color: var(--color-primary);
+  background-color: var(--color-primary-lite);
 }
 
 .secondary-navbar {
@@ -67,7 +67,7 @@
   margin: 10px 10px 0px 10px;
   text-align: left;
   background-color: transparent;
-  color: black;
+  color: rgb(129, 129, 129);
 }
 
 .secondary-navbar .button:last-child {
@@ -80,8 +80,8 @@
   width: calc(100% - 20px);
   margin: 10px 10px 0px 10px;
   text-align: left;
-  background-color: var(--color-primary);
-  color: var(--color-off-white);
+  background-color: var(--color-primary-lite);
+  color: black;
 }
 
 .secondary-navbar .selected-button:last-child {
@@ -89,7 +89,7 @@
 }
 
 .dashboard-contents {
-  background-color: rgba(109, 125, 214, 0.1);
+  background-color: var(--color-off-white);
   border: 1px solid rgb(0, 0, 0, 0.2);
   border-left: none;
   flex: 1;
@@ -100,21 +100,28 @@
   display: flex;
   height: 3rem;
   flex-direction: row;
-  margin: 0.5rem;
+  margin: 1rem;
   gap: 0.5rem;
 }
 
 .header .search-bar {
-  padding: 15px;
   flex: 1;
+  padding: 24px 16px;
   font-size: 16px;
+  border-radius: 10px;
+  border: 1px solid rgb(0, 0, 0, 0.2);
 }
 
-.header .add-button {
-  padding: 0.6em 1em;
-  background-color: var(--color-primary);
-  color: var(--color-off-white);
+.header .search-bar:focus {
+  outline: none;
 }
+
+/* .header .add-button {
+  padding: 0.6em 1em;
+  background-color: var(--color-primary-lite);
+  color: black;
+  border: 1px solid rgb(0, 0, 0, 0.2);
+} */
 
 .header .add-button-hover {
   left: auto !important; /* Positions the hover text to the right of the button */
@@ -156,6 +163,13 @@
   padding: 10px;
   margin-top: 1.5rem;
   font-size: 16px;
+
+  border-radius: 10px;
+  border: 1px solid rgb(0, 0, 0, 0.2);
+}
+
+.new-task-contents .title:focus {
+  outline: none;
 }
 
 .new-task-contents .contents {
@@ -169,6 +183,13 @@
   word-wrap: break-word;
   white-space: pre-wrap;
   resize: none;
+
+  border-radius: 10px;
+  border: 1px solid rgb(0, 0, 0, 0.2);
+}
+
+.new-task-contents .contents:focus {
+  outline: none;
 }
 
 .new-task-contents .footer {
@@ -179,7 +200,7 @@
   gap: 20px;
 }
 
-.footer .button {
+/* .footer .button {
   background-color: var(--color-primary);
-  color: var(--color-off-white);
-}
+  color: black;
+} */

@@ -1,10 +1,10 @@
-import "./llm-fileupload.css";
+import "./llm-file-upload.css";
 import "react-toastify/dist/ReactToastify.css";
 
 import { useDropzone } from "react-dropzone";
 import { useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Bounce, ToastContainer, toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 
 import FetchAPI from "../api/helper";
 import IconButton from "../base-component/icon-button/icon-button";
@@ -20,7 +20,12 @@ const LLMFileUploadView = () => {
   const endRef = useRef<HTMLDivElement | null>(null);
 
   const [files, setFiles] = useState<File[]>([]);
-  const [uploading, setUploading] = useState<boolean>(false);
+  const [uploading, setUploading] = useState(false);
+
+  const [uploadTag, setUploadTag] = useState("");
+  const [confirmTag, setConfirmTag] = useState("");
+  const [uploadFiles, setUploadFiles] = useState(false);
+  const [canUploadFiles, setCanUploadFiles] = useState(false);
 
   // Active Buttons
   const secondaryButtonProps: ButtonProps[] = [
@@ -30,9 +35,27 @@ const LLMFileUploadView = () => {
         navigate("/dashboard/llm/conversations", { replace: true });
       },
     },
+    {
+      text: "🔍 View Embeddings",
+      onClick: () => {
+        navigate("/dashboard/llm/inspect-db", { replace: true });
+      },
+    },
     { text: "⚙️ Add Embeddings", onClick: () => {} },
   ];
-  const [selectedSecondaryButton, setSelectedSecondaryButton] = useState(1); // Just Highlight ⚙️ Add Embeddings
+  const [selectedSecondaryButton, setSelectedSecondaryButton] = useState(2); // Just Highlight ⚙️ Add Embeddings
+
+  // Scroll to bottom of file list when files are updated
+  useEffect(() => {
+    if (endRef && endRef.current) {
+      endRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [files]);
+
+  useEffect(() => {
+    if (uploadTag.length === 0 || confirmTag.length === 0 || uploadTag !== confirmTag) setCanUploadFiles(false);
+    else setCanUploadFiles(true);
+  }, [uploadTag, confirmTag]);
 
   // When we drop files, this triggers through react-dropzone's onDrop callback
   // Exclude dupe filenames
@@ -52,23 +75,36 @@ const LLMFileUploadView = () => {
     [files]
   );
 
-  // Scroll to bottom of file list when files are updated
-  useEffect(() => {
-    if (endRef && endRef.current) {
-      endRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [files]);
-
+  // Dropzone Configurations
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
     accept: { "application/pdf": [".pdf"], "text/plain": [".txt"] },
     multiple: true,
   });
 
-  const removeFile = useCallback((removeFile: File) => {
+  // Handle Remove Files
+  const handleRemoveFile = useCallback((removeFile: File) => {
     setFiles((prevFiles) => prevFiles.filter((file) => file !== removeFile));
     toast.info(`Removed ${removeFile.name}`);
   }, []);
+
+  // Handle Upload Files
+  const handleUploadFiles = (e: React.FormEvent<HTMLFormElement>) => {
+    setUploading(true);
+
+    // Post request
+
+    setFiles([]);
+    setUploading(false);
+    handleCancelUpload();
+  };
+
+  // Handle Cancel Upload
+  const handleCancelUpload = () => {
+    setUploadFiles(false);
+    setUploadTag("");
+    setConfirmTag("");
+  };
 
   return (
     <div className="dashboard-container">
@@ -94,11 +130,11 @@ const LLMFileUploadView = () => {
           </nav>
         </div>
 
-        {/* Main Task Contents */}
+        {/* Main File Upload Contents */}
         <main className="file-dashboard-contents">
           <div {...getRootProps({ className: "file-dropzone" })}>
             <p>Drag & drop some files here, or click to select files</p>
-            <button>Select Files</button>
+            <button className="action-button">Select Files</button>
             <input {...getInputProps()} />
           </div>
           <div className="file-list-wrapper">
@@ -109,7 +145,7 @@ const LLMFileUploadView = () => {
                     <span>{file.name.split(".").pop()}</span>
                   </div>
                   <div className="file-name">{file.name}</div>
-                  <button className="remove-btn" onClick={() => removeFile(file)}>
+                  <button className="remove-btn" onClick={() => handleRemoveFile(file)}>
                     X
                   </button>
                 </li>
@@ -119,8 +155,11 @@ const LLMFileUploadView = () => {
           </div>
           <div className="footer">
             {/* Rememnber to set uploading here to lock */}
-            <button onClick={() => {}}>Upload</button>
+            <button className={files.length > 0 ? "action-button" : "action-button-inactive"} onClick={() => setUploadFiles(true)} disabled={files.length > 0 ? false : true}>
+              Upload
+            </button>
             <button
+              className="action-button"
               onClick={() => {
                 if (files.length) toast.warn("Removed all files");
                 setFiles([]);
@@ -130,6 +169,30 @@ const LLMFileUploadView = () => {
             </button>
           </div>
         </main>
+        {/* Delete Tag Page */}
+        {uploadFiles && (
+          <form
+            className="upload-files-container"
+            onSubmit={(e) => {
+              handleUploadFiles(e);
+            }}
+          >
+            <div className="upload-files-contents">
+              <h2>Upload Files for RAG</h2>
+              <p style={{ marginTop: "8px" }}>Tag your files, and confirm the tag below</p>
+              <input type="text" name="tag-name" className="tag-name" placeholder="Tag" value={uploadTag} onChange={(e) => setUploadTag(e.target.value)} />
+              <input type="text" name="tag-name" className="tag-name" placeholder="Confirm Tag" value={confirmTag} onChange={(e) => setConfirmTag(e.target.value)} />
+              <div className="footer">
+                <button type="submit" className={canUploadFiles ? "action-button" : "action-button-inactive"} disabled={!canUploadFiles}>
+                  Upload Files
+                </button>
+                <button onClick={() => handleCancelUpload()} className="action-button">
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </form>
+        )}
       </div>
     </div>
   );

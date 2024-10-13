@@ -1,50 +1,40 @@
-# React + TypeScript + Vite
+# User Dashboard Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Soba AI is a Task Management and Local LLM platform built with **React and TypeScript**. This application is designed to streamline your workflow and provide valuable insights into your productivity, leveraging the power of RAG and LLM technology.
 
-Currently, two official plugins are available:
+Soba AI is a powerful tool that combines task management, document organization, and AI-powered insights to help you stay on top of your work. By leveraging the power of RAG technology, our platform provides a more accurate and informative way to manage your tasks and documents, and gain valuable insights into your productivity.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## Expanding the ESLint configuration
+### Task Management:
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+Organize your tasks using a intuitive card system, with the ability to track progress and mark tasks as completed.
 
-- Configure the top-level `parserOptions` property like this:
+### Task Summary Generation:
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+Automatically generate summaries of your tasks for the current week, month, or year using a local Language Model (LLM) that can retrieve relevant information from a centralized database.
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+### LLM Conversations:
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+Engage in conversations with our LLM and view conversation history on a dedicated page.
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+### Document Upload and Retrieval:
+
+Upload documents to our centralized database, which can be retrieved by the LLM to inform its responses and provide more accurate summaries.
+
+### RAG-Powered Insights:
+
+Our local LLM uses the uploaded documents to generate more accurate and informative summaries, providing you with valuable insights into your tasks and productivity.
+Overview
+
+## Some Screenshots
+
+![Create Task](assets/screenshots/CreateTask.png)
+
+![Create Task](assets/screenshots/TaskDashboard.png)
+
+![Create Task](assets/screenshots/ConversationPage.png)
+
+![Create Task](assets/screenshots/UploadDocuments.png)
+
+![Create Task](assets/screenshots/ViewDatabase.png)

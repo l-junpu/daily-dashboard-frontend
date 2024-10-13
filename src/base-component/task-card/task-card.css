@@ -5,7 +5,7 @@
   flex-direction: column;
   background-color: white;
   border-radius: 0.5rem;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  box-shadow: 3px 3px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
   padding: 1rem;
 }
 
@@ -48,4 +48,12 @@
 
 .footer .edit {
   margin-left: auto !important;
+}
+
+.task-card .action-button {
+  padding: 0.8em 0.8em;
+  background-color: var(--color-off-white);
+  color: black;
+  border: 1px solid rgb(0, 0, 0, 0.2);
+  text-wrap: nowrap;
 }

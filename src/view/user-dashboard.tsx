@@ -29,6 +29,7 @@ const UserDashboardView = () => {
   const [newTaskId, setNewTaskId] = useState(-1); // Temporary Variables - For Edit
   const [newTaskStatus, setNewTaskStatus] = useState(false); // Temporary Variables - For Edit
   const [newTaskContents, setNewTaskContents] = useState("");
+  const [enableTaskAction, setEnableTaskAction] = useState(false);
 
   // Query
   const [searchText, setSearchText] = useState("");
@@ -95,6 +96,11 @@ const UserDashboardView = () => {
 
     getTasksFromUser();
   }, [username]);
+
+  useEffect(() => {
+    if (newTaskTitle.length === 0 || newTaskContents.length === 0) setEnableTaskAction(false);
+    else setEnableTaskAction(true);
+  }, [newTaskTitle, newTaskContents]);
 
   // Handle Creation of Task
   const handleCreateTask = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -243,7 +249,6 @@ const UserDashboardView = () => {
             cssStyle="button"
             onClick={() => {
               navigate("/dashboard/llm/conversations", { replace: true });
-              console.log("wew");
             }}
           />
         </nav>
@@ -263,10 +268,11 @@ const UserDashboardView = () => {
           {/* Main Task Header */}
           <div className="header">
             <input type="text" placeholder="Search tasks..." value={searchText} className="search-bar" onChange={(e) => setSearchText(e.target.value)} />
-            <IconButton primaryText="╋" hoverText="Add Task" cssStyle="add-button" hoverCssStyle="add-button-hover" onClick={() => setCreateTask(true)} />
+            {/* hoverText="Add Task" hoverCssStyle="add-button-hover" ╋ */}
+            <IconButton primaryText="✚ Add Task" cssStyle="action-button" onClick={() => setCreateTask(true)} />
           </div>
           {/* Change This Header Accordingly */}
-          <h2 style={{ textAlign: "left", margin: "0.5rem", fontSize: "30px" }}>{header}</h2>
+          <h2 style={{ textAlign: "left", margin: "0.7rem", fontSize: "30px" }}>{header}</h2>
           {/* Main Task Cards */}
           <div className="task-grid">
             {filteredSearchTasks.map((task, index) => (
@@ -286,15 +292,9 @@ const UserDashboardView = () => {
           <div className="new-task-contents">
             <h2>{createTask ? "Create New Task" : "Update Task"}</h2>
             <input type="text" placeholder="Task Title" name="title" className="title" value={newTaskTitle} onChange={(e) => setNewTaskTitle(e.target.value)} />
-            <textarea
-              placeholder="Task Description"
-              name="contents"
-              className="contents"
-              value={newTaskContents}
-              onChange={(e) => setNewTaskContents(e.target.value)}
-            />
+            <textarea placeholder="Task Description" name="contents" className="contents" value={newTaskContents} onChange={(e) => setNewTaskContents(e.target.value)} />
             <div className="footer">
-              <button type="submit" className="button">
+              <button type="submit" className={enableTaskAction ? "action-button" : "action-button-inactive"} disabled={!enableTaskAction}>
                 {createTask ? "Create Task" : "Update Task"}
               </button>
               <button
@@ -309,7 +309,7 @@ const UserDashboardView = () => {
                   setNewTaskId(-1);
                   setNewTaskStatus(false);
                 }}
-                className="button"
+                className="action-button"
               >
                 Cancel
               </button>

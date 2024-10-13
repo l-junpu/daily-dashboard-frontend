@@ -36,7 +36,23 @@ const LLMDashboardView = () => {
   const [createChat, setCreateChat] = useState<boolean>(false);
 
   // Conversation Data
-  const [titles, setTitles] = useState<string[]>(["this is a conversation lolasdasdasdasd", "this is a conversation", "this is a"]);
+  const [titles, setTitles] = useState<string[]>([
+    "this is a conversation lolasdasdasdasd",
+    "this is a conversation",
+    "this is a",
+    "this is a",
+    "this is a",
+    "this is a",
+    "this is a",
+    "this is a",
+    "this is a",
+    "this is a",
+    "this is a",
+    "this is a",
+    "this is a",
+    "this is a",
+    "this is a",
+  ]);
   const [activeTitle, setActiveTitle] = useState("");
   const [currentPrompt, setCurrentPrompt] = useState("");
   const [awaitingResponse, setAwaitingResponse] = useState(false);
@@ -76,6 +92,12 @@ const LLMDashboardView = () => {
   // Active Buttons
   const secondaryButtonProps: ButtonProps[] = [
     { text: "📋 Conversations", onClick: () => {} },
+    {
+      text: "🔍 View Embeddings",
+      onClick: () => {
+        navigate("/dashboard/llm/inspect-db", { replace: true });
+      },
+    },
     {
       text: "⚙️ Add Embeddings",
       onClick: () => {
@@ -142,6 +164,9 @@ const LLMDashboardView = () => {
           <p style={{ borderTop: "1px solid rgb(0,0,0,0.2)" }} className="prefix">
             CHAT HISTORY
           </p>
+          <button className="selected-button" onClick={() => setCreateChat(true)}>
+            ✚ New Chat
+          </button>
           <div className="chat-history">
             {titles.map((title, index) => (
               <button
@@ -178,22 +203,22 @@ const LLMDashboardView = () => {
           </div>
         </main>
       </div>
-      {/* Create New Task Page */}
+      {/* Create New Chat Page */}
       {createChat && (
         <form
-          className="create-task-container"
+          className="create-chat-container"
           onSubmit={(e) => {
             handleCreateChat(e);
           }}
         >
-          <div className="new-task-contents">
+          <div className="new-chat-contents">
             <h2>Create New Chat</h2>
-            <input type="text" placeholder="Task Title" name="title" className="title" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} />
+            <input type="text" placeholder="New Chat Name" name="chat-name" className="chat-name" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} />
             <div className="footer">
-              <button type="submit" className="button">
+              <button type="submit" className={newTitle.length > 0 ? "action-button" : "action-button-inactive"} disabled={newTitle.length > 0 ? false : true}>
                 Create Chat
               </button>
-              <button onClick={() => setCreateChat(false)} className="button">
+              <button onClick={() => setCreateChat(false)} className="action-button">
                 Cancel
               </button>
             </div>

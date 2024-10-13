@@ -1,0 +1,169 @@
+.dashboard-body .inspect-dashboard-contents {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgb(0, 0, 0, 0.2);
+  border-left: none;
+  height: 100%;
+  min-height: 120px;
+  gap: 20px;
+  padding: 20px;
+  overflow-y: hidden;
+}
+
+.inspect-dashboard-contents .tag-actions {
+  width: 100%;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: 10px;
+}
+
+.tag-actions .search {
+  font-size: 16px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: 1px solid rgb(0, 0, 0, 0.2);
+}
+
+.tag-actions .search:focus {
+  outline: none;
+}
+
+.inspect-dashboard-contents .db-table {
+  height: 40vh;
+  width: 100%;
+  min-width: 900px;
+  max-width: max(90vw, 900px);
+}
+
+.db-table .center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.db-table .db-header {
+  height: 45px;
+  display: grid;
+  grid-template-columns: 3fr 11fr 3fr 4fr 4fr;
+  background-color: var(--color-primary-lite);
+}
+
+.db-header .left-border {
+  border: 1px solid rgb(0, 0, 0, 0.3);
+  border-right: none;
+}
+
+.db-header .right-border {
+  border: 1px solid rgb(0, 0, 0, 0.3);
+}
+
+.db-header p {
+  font-weight: bold;
+  text-align: center;
+}
+
+.db-table .db-body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100px;
+  /* 40vh - db-header-height */
+  height: calc(40vh - 45px);
+  overflow-y: scroll;
+  background-color: var(--color-secondary);
+
+  border: 1px solid #cccccc;
+  border-top: none;
+}
+
+.db-body::-webkit-scrollbar {
+  width: 3px; /* Adjust the width of the scrollbar */
+  height: 3px; /* Adjust the height of the scrollbar */
+}
+
+/* Style the track */
+.db-body::-webkit-scrollbar-track {
+  background-color: var(--color-off-white); /* Set the track background color */
+  border-radius: 2px; /* Add a rounded corner to the track */
+}
+
+/* Style the thumb */
+.db-body::-webkit-scrollbar-thumb {
+  background-color: var(--color-primary-solid); /* Set the thumb background color */
+  border-radius: 2px; /* Add a rounded corner to the thumb */
+}
+
+.db-body .row {
+  display: grid;
+  width: 100%;
+  box-sizing: border-box;
+  grid-template-columns: 3fr 11fr 3fr 4fr 4fr;
+  padding: 7px 0 7px 0;
+  border-bottom: 1px solid #cccccc;
+}
+
+.db-body .row:last-of-type {
+  border-bottom: none;
+}
+
+.db-body .row a {
+  display: contents;
+  grid-column: span 1;
+  text-decoration: none;
+}
+
+.db-body .row a:hover {
+  text-decoration: underline;
+}
+
+/* .overflow {
+  text-wrap: nowrap;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+} */
+
+/* Delete Tag Container */
+.dashboard-container .delete-tag-container {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.3);
+  padding: 30px 40px;
+}
+
+.delete-tag-container .delete-tag-contents {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-off-white);
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  width: 28rem;
+}
+
+.delete-tag-contents .tag-name {
+  margin-top: 8px;
+  padding: 10px;
+  font-size: 16px;
+
+  border-radius: 10px;
+  border: 1px solid rgb(0, 0, 0, 0.2);
+}
+
+.delete-tag-contents .tag-name:focus {
+  outline: none;
+}
+
+.delete-tag-contents .footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin-top: 1rem;
+  gap: 20px;
+}

@@ -12,10 +12,12 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  --color-primary: #4b49ac;
-  --color-primary-lite: #6563b4;
-  --color-secondary: #98bdff;
-  --color-off-white: #faf9f6;
+  --color-primary: rgb(193, 199, 208, 0.25);
+  --color-primary-solid: rgb(193, 199, 208, 1);
+  --color-primary-lite: #dfe1e6;
+  --color-primary-lite-inactive: rgb(223, 225, 230, 0.4);
+  --color-secondary: #ebecf0;
+  --color-off-white: #f4f5f7;
 }
 
 * {
@@ -61,12 +63,29 @@ button {
   transition: 0.3s;
 }
 button:hover {
-  border-color: #646cff;
+  border-color: rgb(0, 0, 0, 0.2);
 }
-/* button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-} */
+
+.action-button {
+  padding: 0.8em 1.6em;
+  background-color: var(--color-primary-lite);
+  color: black;
+  border: 1px solid rgb(0, 0, 0, 0.2);
+  text-wrap: nowrap;
+}
+
+.action-button-inactive {
+  padding: 0.8em 1.6em;
+  background-color: var(--color-primary-lite-inactive);
+  color: var(--color-primary-solid);
+  border: 1px solid rgb(0, 0, 0, 0.2);
+  text-wrap: nowrap;
+  cursor: not-allowed;
+}
+
+.action-button:hover {
+  background-color: var(--color-primary-solid);
+}
 
 input,
 textarea {
@@ -81,6 +100,7 @@ textarea {
   }
   a:hover {
     color: #747bff;
+    cursor: pointer;
   }
   button {
     background-color: #f9f9f9;
@@ -100,7 +120,7 @@ textarea {
 
 /* Style the thumb */
 *::-webkit-scrollbar-thumb {
-  background-color: var(--color-primary); /* Set the thumb background color */
+  background-color: var(--color-primary-solid); /* Set the thumb background color */
   border-radius: 5px; /* Add a rounded corner to the thumb */
 }
 

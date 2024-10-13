@@ -27,10 +27,14 @@ export interface TaskCardProps {
 
 const ConvertDateTime = (dt: string) => {
   const date = new Date(dt);
-  const formattedDate = `${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")} ${date
+  const gmt8TimeInMs = date.getTime() + date.getTimezoneOffset() * 60 * 1000;
+  const gmt8Date = new Date(gmt8TimeInMs);
+  // Format the GMT+8 date
+  const formattedDate = `${gmt8Date.getHours().toString().padStart(2, "0")}:${gmt8Date.getMinutes().toString().padStart(2, "0")} ${gmt8Date
     .getDate()
     .toString()
-    .padStart(2, "0")}/${(date.getMonth() + 1).toString().padStart(2, "0")}/${date.getFullYear().toString().slice(2)}`;
+    .padStart(2, "0")}/${(gmt8Date.getMonth() + 1).toString().padStart(2, "0")}/${gmt8Date.getFullYear().toString().slice(2)}`;
+
   return formattedDate;
 };
 
@@ -50,13 +54,15 @@ const TaskCard = ({ taskId, title, contents, status, lastModified, createdOn, on
       <footer className="footer">
         <IconButton
           primaryText={status ? "✅ Completed" : "⚠️ In Progress"}
+          cssStyle="action-button"
           onClick={() => {
             onEdit(taskId, title, contents, !status);
           }}
         />
-        <IconButton primaryText="🖉" baseStyle="edit" onClick={() => onOpenEdit(taskId, title, contents, status)} />
+        <IconButton primaryText="📝" cssStyle="action-button" baseStyle="edit" onClick={() => onOpenEdit(taskId, title, contents, status)} />
         <IconButton
-          primaryText="🗑"
+          primaryText="🗑️"
+          cssStyle="action-button"
           onClick={() => {
             onDelete(taskId);
           }}
