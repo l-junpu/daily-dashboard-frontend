@@ -4,9 +4,10 @@
   font-weight: 400;
 
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
+  /* rgba(255, 255, 255, 0.87) */
+  color: black;
   background-color: #242424;
-
+  
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -52,6 +53,16 @@ h1 {
   line-height: 1.1;
 }
 
+input {
+  color: black;
+  background-color: var(--color-secondary);
+}
+
+textarea {
+  color: black;
+  background-color: var(--color-secondary);
+}
+
 button {
   border-radius: 8px;
   border: 1px solid transparent;
@@ -63,6 +74,7 @@ button {
   cursor: pointer;
   transition: 0.3s;
 }
+
 button:hover {
   border-color: rgb(0, 0, 0, 0.2);
 }

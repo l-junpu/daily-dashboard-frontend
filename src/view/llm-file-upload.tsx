@@ -89,10 +89,29 @@ const LLMFileUploadView = () => {
   }, []);
 
   // Handle Upload Files
-  const handleUploadFiles = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleUploadFiles = async (e: React.FormEvent<HTMLFormElement>) => {
     setUploading(true);
 
-    // Post request
+    const formData = new FormData();
+    files.forEach((file) => formData.append("files[]", file));
+
+    console.log("Sending post request")
+    console.log(formData)
+
+    try {
+      const response = await FetchAPI("http://localhost:5000/database/api/upload-files/", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (response.ok) {
+        console.log("Successfully uploaded files to backend for embedding");
+      } else {
+        console.log("Failed to upload files to backend for embedding");
+      }
+    } catch (error) {
+      console.error(error);
+    }
 
     setFiles([]);
     setUploading(false);
