@@ -19,6 +19,9 @@ const LLMFileUploadView = () => {
   const navigate = useNavigate();
   const endRef = useRef<HTMLDivElement | null>(null);
 
+  // Username
+  const [username, setUsername] = useState<string | null>(null);
+
   const [files, setFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
 
@@ -44,6 +47,14 @@ const LLMFileUploadView = () => {
     { text: "⚙️ Add Embeddings", onClick: () => {} },
   ];
   const [selectedSecondaryButton, setSelectedSecondaryButton] = useState(2); // Just Highlight ⚙️ Add Embeddings
+
+  // Retrieve necessary information on initial mount
+  useEffect(() => {
+    const storedUsername = sessionStorage.getItem("username");
+    if (storedUsername) {
+      setUsername(storedUsername);
+    }
+  }, []);
 
   // Scroll to bottom of file list when files are updated
   useEffect(() => {
@@ -90,32 +101,44 @@ const LLMFileUploadView = () => {
 
   // Handle Upload Files
   const handleUploadFiles = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!username) return;
     setUploading(true);
 
     const formData = new FormData();
     files.forEach((file) => formData.append("files[]", file));
-
-    console.log("Sending post request")
-    console.log(formData)
+    formData.append("username", username);
+    formData.append("tag", uploadTag);
 
     try {
-      const response = await FetchAPI("http://localhost:5000/database/api/upload-files/", {
+      const response = await fetch("http://localhost:5000/database/api/upload-files/", {
         method: "POST",
         body: formData,
       });
 
+      /*
+      Basically here we just sit and wait and receive "Status"
+      from the Python Server until it is done with the following:
+      1. Downloading Files
+      2. Chunking Files
+      3. Embedding Files
+         - Embedding File X out of Y
+      4. Once all 3 tasks are completed, we receive status.ok
+      */
+  
       if (response.ok) {
         console.log("Successfully uploaded files to backend for embedding");
       } else {
         console.log("Failed to upload files to backend for embedding");
+        console.log(await response.text()); // Log the response text for debugging
       }
     } catch (error) {
       console.error(error);
+    } finally {
+      setFiles([]);
+      setUploading(false);
+      handleCancelUpload();
     }
-
-    setFiles([]);
-    setUploading(false);
-    handleCancelUpload();
   };
 
   // Handle Cancel Upload
