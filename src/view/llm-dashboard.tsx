@@ -1,7 +1,10 @@
 import "./llm-dashboard.css";
 
-import { useEffect, useRef, useState } from "react";
+import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { FixedSizeList, VariableSizeList } from 'react-window';
+import AutoSizer from "react-virtualized-auto-sizer";
+
 
 import FetchAPI from "../api/helper";
 import IconButton from "../base-component/icon-button/icon-button";
@@ -140,6 +143,23 @@ const LLMDashboardView = () => {
     const model: string = formData.get("model") as string;
   };
 
+  const ChatHistoryRow: React.FC<{index: number, style: React.CSSProperties}> = (
+    { index, style }) => (
+    <button
+      key={index}
+      style={style}
+      className={selectedConversationButton === index ? "selected-button" : "button"}
+      onClick={() => {
+        console.log(titles[index])
+        setSelectedConversationButton(index);
+        setActiveTitle(titles[index]);
+      }}
+      >
+        <span className="button-text-wrap">{titles[index]}</span>
+      </button>
+    // <div style={style}>{titles[index]}</div>
+  );
+
   return (
     <div className="dashboard-container">
       {/* Dashboard Header */}
@@ -167,19 +187,20 @@ const LLMDashboardView = () => {
           <button className="selected-button" onClick={() => setCreateChat(true)}>
             ✚ New Chat
           </button>
+          
           <div className="chat-history">
-            {titles.map((title, index) => (
-              <button
-                key={index}
-                className={selectedConversationButton === index ? "selected-button" : "button"}
-                onClick={() => {
-                  setSelectedConversationButton(index);
-                  setActiveTitle(title);
-                }}
+            <AutoSizer>
+              {({height, width}) => (
+                <FixedSizeList
+                height={height}
+                width={width}
+                itemCount={titles.length}
+                itemSize={50}// NOTE: Fix hardcoded value
               >
-                <span className="button-text-wrap">{title}</span>
-              </button>
-            ))}
+                {ChatHistoryRow}
+              </FixedSizeList>
+              )}
+            </AutoSizer>
           </div>
         </nav>
 
