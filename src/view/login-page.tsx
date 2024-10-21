@@ -44,9 +44,7 @@ const LoginPageView = () => {
       return;
     }
 
-    const status: boolean = response;
-
-    if (!status) {
+    if (!response.status) {
       toast.error("Incorrect username or password");
       return;
     }

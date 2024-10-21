@@ -50,10 +50,12 @@
   overflow-y: auto;
   width: 100%;
   justify-content: center;
+  
 }
 
 .conversation-container .chat-zone {
-  width: 50%;
+  width: 90%;
+  max-width: max(50vw, 900px);
   display: flex;
   flex-direction: column;
 }
@@ -76,7 +78,7 @@
   align-items: end;
   padding: 10px;
   margin-bottom: 15px;
-  width: 100%;
+  width: 90%;
   gap: 10px;
   max-width: max(50vw, 900px);
   border-radius: 40px;

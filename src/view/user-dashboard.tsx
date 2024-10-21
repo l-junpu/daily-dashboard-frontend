@@ -80,11 +80,9 @@ const UserDashboardView = () => {
           });
 
           if (response == null) {
-            console.log("Unable to connect to server");
+            console.log("Unable to receive a valid response from Server - Check logs");
             return;
           }
-
-          console.log(response.tasks);
 
           // Append New Task at [0]
           setTasks([...response.tasks]);
@@ -127,7 +125,7 @@ const UserDashboardView = () => {
     });
 
     if (response == null) {
-      console.log("Unable to connect to server");
+      console.log("Unable to receive a valid response from Server - Check logs");
       return;
     }
 
@@ -188,12 +186,7 @@ const UserDashboardView = () => {
     });
 
     if (response == null) {
-      console.log("Unable to connect to server");
-      return;
-    }
-
-    if (response.status == false) {
-      console.log("Failed to update Task Contents - Probably a bug");
+      console.log("Unable to receive a valid response from Server - Check logs");
       return;
     }
 
@@ -219,12 +212,7 @@ const UserDashboardView = () => {
     });
 
     if (response == null) {
-      console.log("Unable to connect to server");
-      return;
-    }
-
-    if (response.status == false) {
-      console.log("Failed to delete task - Probably a bug");
+      console.log("Unable to receive a valid response from Server - Check logs");
       return;
     }
 
