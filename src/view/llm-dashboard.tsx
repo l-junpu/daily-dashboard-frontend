@@ -3,7 +3,7 @@ import "./llm-dashboard.css";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import FetchAPI from "../api/helper";
+import { FetchResponse } from "../api/helper";
 import IconButton from "../base-component/icon-button/icon-button";
 import TextArea from "../base-component/text-area/text-area";
 
