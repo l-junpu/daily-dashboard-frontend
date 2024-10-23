@@ -2,13 +2,12 @@ import "./llm-dashboard.css";
 
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FixedSizeList, VariableSizeList } from 'react-window';
-import AutoSizer from "react-virtualized-auto-sizer";
-
+import { List, AutoSizer, CellMeasurer, CellMeasurerCache } from 'react-virtualized';
 
 import FetchAPI from "../api/helper";
 import IconButton from "../base-component/icon-button/icon-button";
 import TextArea from "../base-component/text-area/text-area";
+import VirtualizedList from "../base-component/virtualized-list/virtualized-list";
 
 // For Secondary Navbar
 interface ButtonProps {
@@ -57,6 +56,10 @@ const LLMDashboardView = () => {
     "this is a",
   ]);
   const [activeTitle, setActiveTitle] = useState("");
+  const titleCache = useRef(new CellMeasurerCache({
+    fixedHeight: true,
+    defaultHeight: 50
+  }))
   const [currentPrompt, setCurrentPrompt] = useState("");
   const [awaitingResponse, setAwaitingResponse] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
@@ -143,23 +146,6 @@ const LLMDashboardView = () => {
     const model: string = formData.get("model") as string;
   };
 
-  const ChatHistoryRow: React.FC<{index: number, style: React.CSSProperties}> = (
-    { index, style }) => (
-    <button
-      key={index}
-      style={style}
-      className={selectedConversationButton === index ? "selected-button" : "button"}
-      onClick={() => {
-        console.log(titles[index])
-        setSelectedConversationButton(index);
-        setActiveTitle(titles[index]);
-      }}
-      >
-        <span className="button-text-wrap">{titles[index]}</span>
-      </button>
-    // <div style={style}>{titles[index]}</div>
-  );
-
   return (
     <div className="dashboard-container">
       {/* Dashboard Header */}
@@ -189,18 +175,22 @@ const LLMDashboardView = () => {
           </button>
           
           <div className="chat-history">
-            <AutoSizer>
-              {({height, width}) => (
-                <FixedSizeList
-                height={height}
-                width={width}
-                itemCount={titles.length}
-                itemSize={50}// NOTE: Fix hardcoded value
-              >
-                {ChatHistoryRow}
-              </FixedSizeList>
+            <VirtualizedList 
+              rowCount={titles.length}
+              rowComponent={({index, style}) => (
+                <button
+                key={index}
+                style={style}
+                className={selectedConversationButton === index ? "selected-button" : "button"}
+                onClick={() => {
+                  setSelectedConversationButton(index);
+                  setActiveTitle(titles[index]);
+                }}
+                >
+                  <span className="button-text-wrap">{titles[index]}</span>
+                </button>
               )}
-            </AutoSizer>
+            />
           </div>
         </nav>
 
