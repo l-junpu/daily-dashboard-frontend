@@ -98,7 +98,7 @@ const LLMDashboardView = () => {
     },
   ];
   const [selectedSecondaryButton, setSelectedSecondaryButton] = useState(0);
-  const [selectedConversationButton, setSelectedConversationButton] = useState(-1);
+  const [selectedTitleIndex, setSelectedTitleIndex] = useState(-1);
 
   // Retrieve necessary information on initial mount
   useEffect(() => {
@@ -114,7 +114,39 @@ const LLMDashboardView = () => {
 
   // Retrieve Conversations on Username Update
   useEffect(() => {
-    const getConversationsFromUser = async () => {};
+    const getConversationsFromUser = async () => {
+      if (!username) return;
+
+    try {
+        const response = await FetchResponse("http://localhost:8080/get_convos", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username: username,
+          }),
+        });
+
+        if (response == null) {
+          toast.error("Unable to connect to server");
+          return;
+        } else {
+          switch (response.status) {
+            case HttpStatusCode.OK:
+              const data = await response.json();
+              setTitles(data.convoDetails);
+              toast.success("Retrieved conversations");
+              break;
+            default:
+              toast.error(`Server side error: ${response.status}`);
+              return;
+          }
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
     getConversationsFromUser();
   }, [username]);
@@ -130,44 +162,90 @@ const LLMDashboardView = () => {
     // Get Post Data
     const title: string = formData.get("title") as string;
 
-    if (username) {
-      try {
-        const response = await FetchResponse("http://localhost:8080/create_new_convo", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            username: username,
-            title: title,
-            tags: [],
-            documents: [],
-            messages: [],
-          }),
-        });
+    if (!username) return;
 
-        if (response == null) {
-          toast.error("Unable to connect to server");
-          return;
-        } else {
-          switch (response.status) {
-            case HttpStatusCode.OK:
-              const newTitleInfo: TitleInfo = { title: title, id: response.id };
-              setTitles([newTitleInfo, ...titles]);
-              toast.success("New chat created");
-              break;
-            default:
-              toast.error(`Server side error: ${response.status}`);
-              return;
-          }
+    try {
+      const response = await FetchResponse("http://localhost:8080/create_new_convo", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: username,
+          title: title,
+          tags: [],
+          documents: [],
+          messages: [],
+        }),
+      });
+
+      if (response == null) {
+        toast.error("Unable to connect to server");
+        return;
+      } else {
+        switch (response.status) {
+          case HttpStatusCode.OK:
+            const newTitleInfo: TitleInfo = { title: title, id: response.id };
+            setTitles([newTitleInfo, ...titles]);
+            toast.success("New chat created");
+            break;
+          default:
+            toast.error(`Server side error: ${response.status}`);
+            return;
         }
-      } catch (error) {
-        console.error(error);
       }
+    } catch (error) {
+      console.error(error);
     }
 
     setCreateChat(false);
     setNewTitle("");
+  };
+
+  // Handle Create Chat
+  const handleUserPrompt = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (!username) return;
+
+    const userPrompt: Message = {
+      role: "user",
+      contents: currentPrompt
+    }
+
+    try {
+      const response = await FetchResponse("http://localhost:8080/new_user_prompt", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: username,
+          id: titles[selectedTitleIndex].id,
+          message: userPrompt,
+        }),
+      });
+
+      if (response == null) {
+        toast.error("Unable to connect to server");
+        return;
+      } else {
+        switch (response.status) {
+          case HttpStatusCode.OK:
+            // stream response back
+            toast.success("Processing prompt...");
+            break;
+          default:
+            toast.error(`Server side error: ${response.status}`);
+            return;
+        }
+      }
+    } catch (error) {
+      console.error(error);
+    }
+
+    setCurrentPrompt("");
+    setAwaitingResponse(true);
   };
 
   return (
@@ -200,16 +278,15 @@ const LLMDashboardView = () => {
               ✚ New Chat
             </button>
             <div className="chat-history">
-              {titles.map((title, index) => (
+              {titles.map((info, index) => (
                 <button
                   key={index}
-                  className={selectedConversationButton === index ? "selected-button" : "button"}
+                  className={activeTitle === info.title ? "selected-button" : "button"}
                   onClick={() => {
-                    setSelectedConversationButton(index);
-                    setActiveTitle(title.title);
+                    setActiveTitle(info.title);
                   }}
                 >
-                  <span className="button-text-wrap">{title.title}</span>
+                  <span className="button-text-wrap">{info.title}</span>
                 </button>
               ))}
             </div>
@@ -229,10 +306,10 @@ const LLMDashboardView = () => {
                 <div ref={endRef} />
               </div>
             </div>
-            <div className="footer">
+            <form className="footer" onSubmit={handleUserPrompt}>
               <TextArea placeholder="Ask a question..." cssStyle="prompt-search" onChange={setCurrentPrompt} isLocked={awaitingResponse} />
-              <IconButton primaryText="🡩" onClick={() => {}} cssStyle={currentPrompt ? "submit ok" : "submit"} />
-            </div>
+              <button type="submit" id="submit-prompt" disabled={currentPrompt.length > 0 ? false : true} className={currentPrompt ? "submit ok" : "submit"}>🡩</button>
+            </form>
           </main>
         </div>
         {/* Create New Chat Page */}
