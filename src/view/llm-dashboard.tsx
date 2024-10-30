@@ -2,7 +2,6 @@ import "./llm-dashboard.css";
 
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { List, AutoSizer, CellMeasurer, CellMeasurerCache } from 'react-virtualized';
 
 import FetchAPI from "../api/helper";
 import IconButton from "../base-component/icon-button/icon-button";
@@ -56,10 +55,6 @@ const LLMDashboardView = () => {
     "this is a",
   ]);
   const [activeTitle, setActiveTitle] = useState("");
-  const titleCache = useRef(new CellMeasurerCache({
-    fixedHeight: true,
-    defaultHeight: 50
-  }))
   const [currentPrompt, setCurrentPrompt] = useState("");
   const [awaitingResponse, setAwaitingResponse] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
@@ -177,10 +172,9 @@ const LLMDashboardView = () => {
           <div className="chat-history">
             <VirtualizedList 
               rowCount={titles.length}
-              rowComponent={({index, style}) => (
+              rowComponent={(index) => (
                 <button
                 key={index}
-                style={style}
                 className={selectedConversationButton === index ? "selected-button" : "button"}
                 onClick={() => {
                   setSelectedConversationButton(index);
