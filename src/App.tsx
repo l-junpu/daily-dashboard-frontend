@@ -10,7 +10,7 @@ const App = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<LoginPageView />} />
+        <Route path="/" element={<LLMDashboardView />} />
         <Route path="/dashboard/tasks" element={<UserDashboardView />} />
         <Route path="/dashboard/llm/conversations" element={<LLMDashboardView />} />
         <Route path="/dashboard/llm/inspect-db" element={<LLMInspectDBView />} />
