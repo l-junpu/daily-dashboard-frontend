@@ -24,7 +24,7 @@ interface TitleInfo {
 
 interface Message {
   role: string;
-  contents: string;
+  content: string;
 }
 interface Conversation {
   title: string;
@@ -48,38 +48,7 @@ const LLMDashboardView = () => {
   const [activeTitle, setActiveTitle] = useState("");
   const [currentPrompt, setCurrentPrompt] = useState("");
   const [awaitingResponse, setAwaitingResponse] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      role: "user",
-      contents:
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker",
-    },
-    {
-      role: "assistant",
-      contents:
-        "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).",
-    },
-    {
-      role: "user",
-      contents:
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker",
-    },
-    {
-      role: "assistant",
-      contents:
-        "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).",
-    },
-    {
-      role: "user",
-      contents:
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker",
-    },
-    {
-      role: "assistant",
-      contents:
-        "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).",
-    },
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
 
   // Active Buttons
   const secondaryButtonProps: ButtonProps[] = [
@@ -136,10 +105,9 @@ const LLMDashboardView = () => {
             case HttpStatusCode.OK:
               const data = await response.json();
               setTitles(data.convoDetails);
-              toast.success("Retrieved conversations");
               break;
             default:
-              toast.error(`Server side error: ${response.status}`);
+              toast.error(`Server side error (Unable to retrieve conversations): ${response.status}`);
               return;
           }
         }
@@ -198,20 +166,27 @@ const LLMDashboardView = () => {
       console.error(error);
     }
 
+    // Increment selected index by 1 - Because we insert the new chat above
+    setSelectedTitleIndex(selectedTitleIndex+1)
     setCreateChat(false);
     setNewTitle("");
   };
 
-  // Handle Create Chat
-  const handleUserPrompt = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  // Handle User Sending a Prompt
+  const handleUserPrompt = async (event?: React.FormEvent<HTMLFormElement>) => {
+    if (event) event.preventDefault();
 
     if (!username) return;
 
     const userPrompt: Message = {
       role: "user",
-      contents: currentPrompt
+      content: currentPrompt
     }
+
+    // Freeze controls
+    setCurrentPrompt("");
+    setAwaitingResponse(true);
+    toast.success("Processing prompt...");
 
     try {
       const response = await FetchResponse("http://localhost:8080/new_user_prompt", {
@@ -227,25 +202,63 @@ const LLMDashboardView = () => {
       });
 
       if (response == null) {
+        // Disable Lock
+        setAwaitingResponse(false);
         toast.error("Unable to connect to server");
         return;
       } else {
         switch (response.status) {
           case HttpStatusCode.OK:
-            // stream response back
-            toast.success("Processing prompt...");
+            // STREAM RESPONSE BACK
+            
+            // Disable Lock
+            setAwaitingResponse(false);
             break;
-          default:
-            toast.error(`Server side error: ${response.status}`);
+            default:
+              // Disable Lock
+              setAwaitingResponse(false);
+              toast.error(`Server side error: ${response.status}`);
             return;
         }
       }
     } catch (error) {
       console.error(error);
     }
+  };
 
-    setCurrentPrompt("");
-    setAwaitingResponse(true);
+  // Handle User Retrieving Conversation History
+  const handleRetrieveConvoHistory = async (id: ObjectId) => {
+    if (!username) return;
+
+    try {
+      const response = await FetchResponse("http://localhost:8080/get_convo_history", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: username,
+          id: id,
+        }),
+      });
+
+      if (response == null) {
+        toast.error("Unable to connect to server");
+        return;
+      } else {
+        switch (response.status) {
+          case HttpStatusCode.OK:
+            const responseMessages = await response.json();
+            setMessages(responseMessages.messages);
+            break;
+            default:
+              toast.error(`Server side error: ${response.status}`);
+            return;
+        }
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -284,6 +297,8 @@ const LLMDashboardView = () => {
                   className={activeTitle === info.title ? "selected-button" : "button"}
                   onClick={() => {
                     setActiveTitle(info.title);
+                    setSelectedTitleIndex(index);
+                    handleRetrieveConvoHistory(info.id);
                   }}
                 >
                   <span className="button-text-wrap">{info.title}</span>
@@ -299,15 +314,15 @@ const LLMDashboardView = () => {
               {/* Actual Chat Area - 50% Subset of Entire Convo Area */}
               <div className="chat-zone">
                 {messages.map((message, index) => (
-                  <p key={index} className={message.role == "user" ? "chat" : "chat user"}>
-                    {message.contents}
+                  <p key={index} className={message.role == "user" ? "chat user" : "chat"}>
+                    {message.content}
                   </p>
                 ))}
                 <div ref={endRef} />
               </div>
             </div>
             <form className="footer" onSubmit={handleUserPrompt}>
-              <TextArea placeholder="Ask a question..." cssStyle="prompt-search" onChange={setCurrentPrompt} isLocked={awaitingResponse} />
+              <TextArea placeholder="Ask a question..." cssStyle="prompt-search" text={currentPrompt} onChange={setCurrentPrompt}  onEnterDown={handleUserPrompt} isLocked={awaitingResponse} />
               <button type="submit" id="submit-prompt" disabled={currentPrompt.length > 0 ? false : true} className={currentPrompt ? "submit ok" : "submit"}>🡩</button>
             </form>
           </main>

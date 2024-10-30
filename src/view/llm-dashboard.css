@@ -58,6 +58,7 @@
   max-width: max(50vw, 900px);
   display: flex;
   flex-direction: column;
+  gap: 10px;
 }
 
 .chat-zone .chat {
