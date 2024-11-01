@@ -153,7 +153,8 @@ const LLMDashboardView = () => {
       } else {
         switch (response.status) {
           case HttpStatusCode.OK:
-            const newTitleInfo: TitleInfo = { title: title, id: response.id };
+            const responseJson = await response.json();
+            const newTitleInfo: TitleInfo = { title: title, id: responseJson.id };
             setTitles([newTitleInfo, ...titles]);
             toast.success("New chat created");
             break;
@@ -186,7 +187,7 @@ const LLMDashboardView = () => {
     // Freeze controls
     setCurrentPrompt("");
     setAwaitingResponse(true);
-    toast.success("Processing prompt...");
+    setMessages([...messages, userPrompt])
 
     try {
       const response = await FetchResponse("http://localhost:8080/new_user_prompt", {
@@ -200,6 +201,14 @@ const LLMDashboardView = () => {
           message: userPrompt,
         }),
       });
+
+      // Shift Conversation to the front after we send a message
+      const idx = titles.findIndex(elem => elem.title == activeTitle);
+      if (idx !== -1) {
+        const title = titles.splice(idx, 1);
+        titles.unshift(title[0]);
+        setTitles(titles);
+      }
 
       if (response == null) {
         // Disable Lock
