@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 
-import FetchAPI from "../api/helper";
 import IconButton from "../base-component/icon-button/icon-button";
 
 // For Secondary Navbar

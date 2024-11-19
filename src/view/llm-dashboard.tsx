@@ -10,6 +10,10 @@ import IconButton from "../base-component/icon-button/icon-button";
 import TextArea from "../base-component/text-area/text-area";
 import { toast, ToastContainer } from "react-toastify";
 
+import rehypeHighlight from "rehype-highlight";
+import ReactMarkdown from "react-markdown";
+import "highlight.js/styles/base16/papercolor-light.css";
+
 // For Secondary Navbar
 interface ButtonProps {
   text: string;
@@ -46,6 +50,7 @@ const LLMDashboardView = () => {
   // Conversation Data
   const [titles, setTitles] = useState<TitleInfo[]>([]);
   const [activeTitle, setActiveTitle] = useState("");
+  const [activeTitleId, setActiveTitleId] = useState<ObjectId | null>(null);
   const [currentPrompt, setCurrentPrompt] = useState("");
   const [awaitingResponse, setAwaitingResponse] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -75,10 +80,6 @@ const LLMDashboardView = () => {
     if (storedUsername) {
       setUsername(storedUsername);
     }
-    // Scroll to bottom
-    if (endRef && endRef.current) {
-      endRef.current.scrollIntoView({ behavior: "smooth" });
-    }
   }, []);
 
   // Retrieve Conversations on Username Update
@@ -86,7 +87,7 @@ const LLMDashboardView = () => {
     const getConversationsFromUser = async () => {
       if (!username) return;
 
-    try {
+      try {
         const response = await FetchResponse("http://localhost:8080/get_convos", {
           method: "POST",
           headers: {
@@ -118,6 +119,13 @@ const LLMDashboardView = () => {
 
     getConversationsFromUser();
   }, [username]);
+
+  useEffect(() => {
+    // Scroll to bottom
+    if (endRef && endRef.current) {
+      endRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
 
   // Handle Create Chat
   const handleCreateChat = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -168,10 +176,33 @@ const LLMDashboardView = () => {
     }
 
     // Increment selected index by 1 - Because we insert the new chat above
-    setSelectedTitleIndex(selectedTitleIndex+1)
+    setSelectedTitleIndex(selectedTitleIndex + 1);
     setCreateChat(false);
     setNewTitle("");
   };
+
+  async function* decodeStreamToJson(data: ReadableStream<Uint8Array> | null): AsyncIterableIterator<string> {
+    if (!data) return;
+
+    const reader = data.getReader();
+    const decoder = new TextDecoder();
+
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) {
+        console.log("Completed response");
+        break;
+      }
+
+      if (value) {
+        try {
+          yield decoder.decode(value);
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    }
+  }
 
   // Handle User Sending a Prompt
   const handleUserPrompt = async (event?: React.FormEvent<HTMLFormElement>) => {
@@ -181,16 +212,22 @@ const LLMDashboardView = () => {
 
     const userPrompt: Message = {
       role: "user",
-      content: currentPrompt
-    }
+      content: currentPrompt,
+    };
+
+    const assistantResponse: Message = {
+      role: "asisstant",
+      content: "",
+    };
 
     // Freeze controls
     setCurrentPrompt("");
     setAwaitingResponse(true);
-    setMessages([...messages, userPrompt])
+    messages.push(userPrompt);
+    messages.push(assistantResponse);
 
     try {
-      const response = await FetchResponse("http://localhost:8080/new_user_prompt", {
+      const response = await fetch("http://localhost:8080/new_user_prompt", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -203,7 +240,7 @@ const LLMDashboardView = () => {
       });
 
       // Shift Conversation to the front after we send a message
-      const idx = titles.findIndex(elem => elem.title == activeTitle);
+      const idx = titles.findIndex((elem) => elem.title == activeTitle);
       if (idx !== -1) {
         const title = titles.splice(idx, 1);
         titles.unshift(title[0]);
@@ -216,18 +253,13 @@ const LLMDashboardView = () => {
         toast.error("Unable to connect to server");
         return;
       } else {
-        switch (response.status) {
-          case HttpStatusCode.OK:
-            // STREAM RESPONSE BACK
-            
-            // Disable Lock
-            setAwaitingResponse(false);
-            break;
-            default:
-              // Disable Lock
-              setAwaitingResponse(false);
-              toast.error(`Server side error: ${response.status}`);
-            return;
+        if (response.ok) {
+          let assistantResponse: string = "";
+          for await (const chunk of decodeStreamToJson(response.body)) {
+            assistantResponse += chunk;
+            setMessages([...messages.slice(0, messages.length - 1), { role: "assistant", content: assistantResponse }]);
+          }
+          setAwaitingResponse(false);
         }
       }
     } catch (error) {
@@ -236,19 +268,30 @@ const LLMDashboardView = () => {
   };
 
   // Handle User Retrieving Conversation History
-  const handleRetrieveConvoHistory = async (id: ObjectId) => {
+  const handleRetrieveConvoHistory = async (prevId: ObjectId | null, id: ObjectId) => {
     if (!username) return;
 
     try {
+      // To allow for handling of unloading of Conversations from
+      // Redis in the backend
+      const body: string =
+        prevId === null
+          ? JSON.stringify({
+              username: username,
+              id: id,
+            })
+          : JSON.stringify({
+              username: username,
+              prevId: prevId,
+              id: id,
+            });
+
       const response = await FetchResponse("http://localhost:8080/get_convo_history", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          username: username,
-          id: id,
-        }),
+        body: body,
       });
 
       if (response == null) {
@@ -260,8 +303,8 @@ const LLMDashboardView = () => {
             const responseMessages = await response.json();
             setMessages(responseMessages.messages);
             break;
-            default:
-              toast.error(`Server side error: ${response.status}`);
+          default:
+            toast.error(`Server side error: ${response.status}`);
             return;
         }
       }
@@ -303,11 +346,12 @@ const LLMDashboardView = () => {
               {titles.map((info, index) => (
                 <button
                   key={index}
-                  className={activeTitle === info.title ? "selected-button" : "button"}
+                  className={activeTitleId === info.id ? "selected-button" : "button"}
                   onClick={() => {
                     setActiveTitle(info.title);
                     setSelectedTitleIndex(index);
-                    handleRetrieveConvoHistory(info.id);
+                    handleRetrieveConvoHistory(activeTitleId, info.id);
+                    setActiveTitleId(info.id);
                   }}
                 >
                   <span className="button-text-wrap">{info.title}</span>
@@ -324,16 +368,31 @@ const LLMDashboardView = () => {
               <div className="chat-zone">
                 {messages.map((message, index) => (
                   <p key={index} className={message.role == "user" ? "chat user" : "chat"}>
-                    {message.content}
+                    {message.role == "assistant" && <h3>LLM served by DouDou and Soba</h3>}
+                    <ReactMarkdown
+                      children={message.content}
+                      rehypePlugins={[[rehypeHighlight, { detect: true, plainText: ["makefile", "bash"] }]]}
+                    ></ReactMarkdown>
                   </p>
                 ))}
                 <div ref={endRef} />
               </div>
             </div>
-            <form className="footer" onSubmit={handleUserPrompt}>
-              <TextArea placeholder="Ask a question..." cssStyle="prompt-search" text={currentPrompt} onChange={setCurrentPrompt}  onEnterDown={handleUserPrompt} isLocked={awaitingResponse} />
-              <button type="submit" id="submit-prompt" disabled={currentPrompt.length > 0 ? false : true} className={currentPrompt ? "submit ok" : "submit"}>🡩</button>
-            </form>
+            {activeTitle !== "" && (
+              <form className="footer" onSubmit={handleUserPrompt}>
+                <TextArea
+                  placeholder="Ask a question..."
+                  cssStyle="prompt-search"
+                  text={currentPrompt}
+                  onChange={setCurrentPrompt}
+                  onEnterDown={handleUserPrompt}
+                  isLocked={awaitingResponse}
+                />
+                <button type="submit" id="submit-prompt" disabled={currentPrompt.length > 0 ? false : true} className={currentPrompt ? "submit ok" : "submit"}>
+                  🡩
+                </button>
+              </form>
+            )}
           </main>
         </div>
         {/* Create New Chat Page */}
