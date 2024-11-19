@@ -50,12 +50,15 @@
   overflow-y: auto;
   width: 100%;
   justify-content: center;
+  
 }
 
 .conversation-container .chat-zone {
-  width: 50%;
+  width: 90%;
+  max-width: max(50vw, 900px);
   display: flex;
   flex-direction: column;
+  gap: 10px;
 }
 
 .chat-zone .chat {
@@ -76,7 +79,7 @@
   align-items: end;
   padding: 10px;
   margin-bottom: 15px;
-  width: 100%;
+  width: 90%;
   gap: 10px;
   max-width: max(50vw, 900px);
   border-radius: 40px;
@@ -117,6 +120,7 @@
   height: 50px;
   background-color: rgba(85, 85, 85, 0.2);
   color: rgb(0, 0, 0, 0.7);
+  cursor: pointer;
 }
 
 /* Create New Chat Container */

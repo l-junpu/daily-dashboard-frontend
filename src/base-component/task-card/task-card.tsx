@@ -27,10 +27,12 @@ export interface TaskCardProps {
 
 const ConvertDateTime = (dt: string) => {
   const date = new Date(dt);
-  const gmt8TimeInMs = date.getTime() + date.getTimezoneOffset() * 60 * 1000;
-  const gmt8Date = new Date(gmt8TimeInMs);
-  // Format the GMT+8 date
-  const formattedDate = `${gmt8Date.getHours().toString().padStart(2, "0")}:${gmt8Date.getMinutes().toString().padStart(2, "0")} ${gmt8Date
+  const gmt8Date = new Date(date.getTime());
+
+  const hours = gmt8Date.getHours();
+  const ampm = hours >= 12 ? "PM" : "AM";
+  const formattedHours = hours % 12 === 0 ? 12 : hours % 12;
+  const formattedDate = `${formattedHours.toString().padStart(2, "0")}:${gmt8Date.getMinutes().toString().padStart(2, "0")} ${ampm} ${gmt8Date
     .getDate()
     .toString()
     .padStart(2, "0")}/${(gmt8Date.getMonth() + 1).toString().padStart(2, "0")}/${gmt8Date.getFullYear().toString().slice(2)}`;

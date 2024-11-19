@@ -4,13 +4,15 @@ import "./text-area.css";
 interface TextAreaProps {
   placeholder: string;
   cssStyle: string;
-  onChange?: (text: string) => void;
-  onEnterDown?: () => void;
+  text: string;
+  onChange: (text: string) => void;
+  onEnterDown?: (event?: React.FormEvent<HTMLFormElement>) => void;
   isLocked?: boolean;
 }
 
-const TextArea = ({ placeholder, cssStyle, onChange, onEnterDown, isLocked }: TextAreaProps) => {
-  const [text, setText] = useState("");
+// we still need to handle the title and id portion
+
+const TextArea = ({ placeholder, cssStyle, text, onChange, onEnterDown, isLocked }: TextAreaProps) => {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
@@ -22,16 +24,14 @@ const TextArea = ({ placeholder, cssStyle, onChange, onEnterDown, isLocked }: Te
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newText = e.target.value;
-    setText(newText);
-    if (onChange) {
-      onChange(newText);
-    }
+    onChange(newText);
   };
 
   const handleOnKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && onEnterDown) {
+    // Else submit form
+    if (e.key === "Enter" && !e.shiftKey && onEnterDown) {
       onEnterDown();
-      setText("");
+      onChange("");
     }
   };
 

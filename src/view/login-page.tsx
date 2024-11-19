@@ -4,7 +4,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useState } from "react";
 import { FaLock, FaUser } from "react-icons/fa";
 
-import FetchAPI from "../api/helper";
+import { FetchResponse, HttpStatusCode } from "../api/helper";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 
@@ -28,7 +28,7 @@ const LoginPageView = () => {
       api = "http://localhost:8080/login";
     }
 
-    const response = await FetchAPI(api, {
+    const response = await FetchResponse(api, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -42,13 +42,17 @@ const LoginPageView = () => {
     if (response == null) {
       toast.error("Unable to connect to server");
       return;
-    }
-
-    const status: boolean = response;
-
-    if (!status) {
-      toast.error("Incorrect username or password");
-      return;
+    } else {
+      switch (response.status) {
+        case HttpStatusCode.OK:
+          break;
+        case HttpStatusCode.UNAUTHORIZED:
+          toast.error("Incorrect username or password");
+          return;
+        default:
+          toast.error(`Server side error: ${response.status}`);
+          return;
+      }
     }
 
     if (register) {
