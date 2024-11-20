@@ -1,13 +1,14 @@
 import "./llm-dashboard.css";
 import "react-toastify/dist/ReactToastify.css";
 
-import { useEffect, useRef, useState } from "react";
+import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ObjectId } from "bson";
 
 import { FetchResponse, HttpStatusCode } from "../api/helper";
 import IconButton from "../base-component/icon-button/icon-button";
 import TextArea from "../base-component/text-area/text-area";
+import VirtualizedList from "../base-component/virtualized-list/virtualized-list";
 import { toast, ToastContainer } from "react-toastify";
 
 import rehypeHighlight from "rehype-highlight";
@@ -234,13 +235,13 @@ const LLMDashboardView = () => {
         },
         body: JSON.stringify({
           username: username,
-          id: titles[selectedTitleIndex].id,
+          id: activeTitleId,
           message: userPrompt,
         }),
       });
 
       // Shift Conversation to the front after we send a message
-      const idx = titles.findIndex((elem) => elem.title == activeTitle);
+      const idx = titles.findIndex((elem) => elem.id == activeTitleId);
       if (idx !== -1) {
         const title = titles.splice(idx, 1);
         titles.unshift(title[0]);
@@ -325,7 +326,6 @@ const LLMDashboardView = () => {
             <IconButton primaryText="📋" hoverText="Tasks" cssStyle="button" onClick={() => navigate("/dashboard/tasks", { replace: true })} />
             <IconButton primaryText="💻" hoverText="LLM" cssStyle="button primary-selected" onClick={() => {}} />
           </nav>
-
           {/* Redirections to the different Task pages */}
           <nav className="secondary-navbar">
             <p className="prefix">DASHBOARD</p>
@@ -342,21 +342,25 @@ const LLMDashboardView = () => {
             <button className="selected-button" onClick={() => setCreateChat(true)}>
               ✚ New Chat
             </button>
+
             <div className="chat-history">
-              {titles.map((info, index) => (
-                <button
-                  key={index}
-                  className={activeTitleId === info.id ? "selected-button" : "button"}
-                  onClick={() => {
-                    setActiveTitle(info.title);
-                    setSelectedTitleIndex(index);
-                    handleRetrieveConvoHistory(activeTitleId, info.id);
-                    setActiveTitleId(info.id);
-                  }}
-                >
-                  <span className="button-text-wrap">{info.title}</span>
-                </button>
-              ))}
+              <VirtualizedList
+                rowCount={titles.length}
+                rowComponent={(index) => (
+                  <button
+                    key={index}
+                    className={activeTitleId === titles[index].id ? "selected-button" : "button"}
+                    onClick={() => {
+                      setActiveTitle(titles[index].title);
+                      setSelectedTitleIndex(index);
+                      handleRetrieveConvoHistory(activeTitleId, titles[index].id);
+                      setActiveTitleId(titles[index].id);
+                    }}
+                  >
+                    <span className="button-text-wrap">{titles[index].title}</span>
+                  </button>
+                )}
+              />
             </div>
           </nav>
 
@@ -366,33 +370,33 @@ const LLMDashboardView = () => {
             <div className="conversation-container">
               {/* Actual Chat Area - 50% Subset of Entire Convo Area */}
               <div className="chat-zone">
-                {messages.map((message, index) => (
-                  <p key={index} className={message.role == "user" ? "chat user" : "chat"}>
-                    {message.role == "assistant" && <h3>LLM served by DouDou and Soba</h3>}
-                    <ReactMarkdown
-                      children={message.content}
-                      rehypePlugins={[[rehypeHighlight, { detect: true, plainText: ["makefile", "bash"] }]]}
-                    ></ReactMarkdown>
-                  </p>
-                ))}
-                <div ref={endRef} />
+                <VirtualizedList
+                  rowCount={messages.length}
+                  rowComponent={(index) => (
+                    <p key={index} className={messages[index].role == "user" ? "chat user" : "chat"}>
+                      {messages[index].role == "assistant" && <h3>LLM served by DouDou and Soba</h3>}
+                      <ReactMarkdown
+                        children={messages[index].content}
+                        rehypePlugins={[[rehypeHighlight, { detect: true, plainText: ["makefile", "bash"] }]]}
+                      ></ReactMarkdown>
+                    </p>
+                  )}
+                />
               </div>
             </div>
-            {activeTitle !== "" && (
-              <form className="footer" onSubmit={handleUserPrompt}>
-                <TextArea
-                  placeholder="Ask a question..."
-                  cssStyle="prompt-search"
-                  text={currentPrompt}
-                  onChange={setCurrentPrompt}
-                  onEnterDown={handleUserPrompt}
-                  isLocked={awaitingResponse}
-                />
-                <button type="submit" id="submit-prompt" disabled={currentPrompt.length > 0 ? false : true} className={currentPrompt ? "submit ok" : "submit"}>
-                  🡩
-                </button>
-              </form>
-            )}
+            <form className="footer" onSubmit={handleUserPrompt}>
+              <TextArea
+                placeholder="Ask a question..."
+                cssStyle="prompt-search"
+                text={currentPrompt}
+                onChange={setCurrentPrompt}
+                onEnterDown={handleUserPrompt}
+                isLocked={awaitingResponse}
+              />
+              <button type="submit" id="submit-prompt" disabled={currentPrompt.length > 0 ? false : true} className={currentPrompt ? "submit ok" : "submit"}>
+                🡩
+              </button>
+            </form>
           </main>
         </div>
         {/* Create New Chat Page */}
