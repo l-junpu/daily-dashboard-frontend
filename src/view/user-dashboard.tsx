@@ -9,6 +9,8 @@ import TaskCard, { TaskDetails } from "../base-component/task-card/task-card";
 import { FetchResponse, HttpStatusCode } from "../api/helper";
 import { toast, ToastContainer } from "react-toastify";
 
+import { connectSocket } from "../api/socket";
+
 interface ButtonProps {
   text: string;
   onClick: (index: number) => void;
@@ -63,6 +65,7 @@ const UserDashboardView = () => {
     const storedUsername = sessionStorage.getItem("username");
     if (storedUsername) {
       setUsername(storedUsername);
+      connectSocket(storedUsername);
     }
   }, []);
 
@@ -88,7 +91,9 @@ const UserDashboardView = () => {
             switch (response.status) {
               case HttpStatusCode.OK:
                 const responseJson = await response.json();
-                setTasks([...responseJson.tasks]);
+                if (responseJson.tasks && responseJson.tasks.length > 0) {
+                  setTasks([...responseJson.tasks]);
+                }
                 break;
               default:
                 toast.error(`Server side error: ${response.status}`);

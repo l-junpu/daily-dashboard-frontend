@@ -1,7 +1,7 @@
 import "./llm-dashboard.css";
 import "react-toastify/dist/ReactToastify.css";
 
-import { CSSProperties, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ObjectId } from "bson";
 

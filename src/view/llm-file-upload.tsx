@@ -5,6 +5,7 @@ import { useDropzone } from "react-dropzone";
 import { useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
+import { connectionStatus, connectSocket, getSocket } from "../api/socket";
 
 import IconButton from "../base-component/icon-button/icon-button";
 
@@ -29,6 +30,9 @@ const LLMFileUploadView = () => {
   const [uploadFiles, setUploadFiles] = useState(false);
   const [canUploadFiles, setCanUploadFiles] = useState(false);
 
+  // Last known status from the ChromaDB Flask Application
+  const [lastStatus, setLastStatus] = useState("Retrieving status...");
+
   // Active Buttons
   const secondaryButtonProps: ButtonProps[] = [
     {
@@ -52,7 +56,12 @@ const LLMFileUploadView = () => {
     const storedUsername = sessionStorage.getItem("username");
     if (storedUsername) {
       setUsername(storedUsername);
+      connectSocket(storedUsername);
     }
+
+    getSocket().on("status_update", (data) => {
+      setLastStatus(data.status);
+    });
   }, []);
 
   // Scroll to bottom of file list when files are updated
@@ -124,7 +133,7 @@ const LLMFileUploadView = () => {
          - Embedding File X out of Y
       4. Once all 3 tasks are completed, we receive status.ok
       */
-  
+
       if (response.ok) {
         console.log("Successfully uploaded files to backend for embedding");
       } else {
@@ -173,6 +182,8 @@ const LLMFileUploadView = () => {
 
         {/* Main File Upload Contents */}
         <main className="file-dashboard-contents">
+          <h2>{connectionStatus ? "✅ Connected" : "⚠️ Disconnected"}</h2>
+          <h4>{lastStatus}</h4>
           <div {...getRootProps({ className: "file-dropzone" })}>
             <p>Drag & drop some files here, or click to select files</p>
             <button className="action-button">Select Files</button>
