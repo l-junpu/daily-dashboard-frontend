@@ -278,7 +278,9 @@ const UserDashboardView = () => {
       <ToastContainer position="bottom-right" />
       <div className="dashboard-container">
         {/* Dashboard Header */}
-        <header className="dashboard-header">HEADER</header>
+        <header className="dashboard-header">
+          <div className="title">SOBA AI</div>
+        </header>
         <div className="dashboard-body">
           {/* Redirection to the 2 main applications */}
           <nav className="primary-navbar">
@@ -312,7 +314,7 @@ const UserDashboardView = () => {
               <IconButton primaryText="✚ Add Task" cssStyle="action-button" onClick={() => setCreateTask(true)} />
             </div>
             {/* Change This Header Accordingly */}
-            <h2 style={{ textAlign: "left", margin: "0.7rem", fontSize: "30px" }}>{header}</h2>
+            <h2 style={{ textAlign: "left", margin: "0.7rem", fontSize: "30px", color: "var(--color-font)" }}>{header}</h2>
             {/* Main Task Cards */}
             <div className="task-grid">
               {filteredSearchTasks.map((task, index) => (
@@ -330,7 +332,7 @@ const UserDashboardView = () => {
             }}
           >
             <div className="new-task-contents">
-              <h2>{createTask ? "Create New Task" : "Update Task"}</h2>
+              <h2 style={{ color: "var(--color-font)" }}>{createTask ? "Create New Task" : "Update Task"}</h2>
               <input type="text" placeholder="Task Title" name="title" className="title" value={newTaskTitle} onChange={(e) => setNewTaskTitle(e.target.value)} />
               <textarea placeholder="Task Description" name="contents" className="contents" value={newTaskContents} onChange={(e) => setNewTaskContents(e.target.value)} />
               <div className="footer">
@@ -349,7 +351,7 @@ const UserDashboardView = () => {
                     setNewTaskId(-1);
                     setNewTaskStatus(false);
                   }}
-                  className="action-button"
+                  className="action-button-cancel"
                 >
                   Cancel
                 </button>

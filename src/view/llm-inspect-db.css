@@ -11,6 +11,7 @@
   gap: 20px;
   padding: 20px;
   overflow-y: hidden;
+  background-color: var(--color-secondary);
 }
 
 .inspect-dashboard-contents .tag-actions {
@@ -25,8 +26,10 @@
 .tag-actions .search {
   font-size: 16px;
   padding: 10px 16px;
+  color: var(--color-font);
+  background-color: var(--color-tertiary);
   border-radius: 10px;
-  border: 1px solid rgb(0, 0, 0, 0.2);
+  border: 1px solid var(--color-border);
 }
 
 .tag-actions .search:focus {
@@ -50,16 +53,17 @@
   height: 45px;
   display: grid;
   grid-template-columns: 3fr 11fr 3fr 4fr 4fr;
-  background-color: var(--color-primary-lite);
+  background-color: var(--color-tertiary);
+  color: var(--color-font);
 }
 
 .db-header .left-border {
-  border: 1px solid rgb(0, 0, 0, 0.3);
+  border: 1px solid var(--color-border);
   border-right: none;
 }
 
 .db-header .right-border {
-  border: 1px solid rgb(0, 0, 0, 0.3);
+  border: 1px solid var(--color-border);
 }
 
 .db-header p {
@@ -74,9 +78,10 @@
   /* 40vh - db-header-height */
   height: calc(40vh - 45px);
   overflow-y: scroll;
-  background-color: var(--color-secondary);
+  background-color: var(--color-button-darker);
+  color: var(--color-font);
 
-  border: 1px solid #cccccc;
+  border: 1px solid var(--color-border);
   border-top: none;
 }
 
@@ -87,13 +92,13 @@
 
 /* Style the track */
 .db-body::-webkit-scrollbar-track {
-  background-color: var(--color-off-white); /* Set the track background color */
+  background-color: var(--color-secondary); /* Set the track background color */
   border-radius: 2px; /* Add a rounded corner to the track */
 }
 
 /* Style the thumb */
 .db-body::-webkit-scrollbar-thumb {
-  background-color: var(--color-primary-solid); /* Set the thumb background color */
+  background-color: var(--color-inactive-text); /* Set the thumb background color */
   border-radius: 2px; /* Add a rounded corner to the thumb */
 }
 
@@ -103,7 +108,7 @@
   box-sizing: border-box;
   grid-template-columns: 3fr 11fr 3fr 4fr 4fr;
   padding: 7px 0 7px 0;
-  border-bottom: 1px solid #cccccc;
+  border: 1px solid var(--color-border);
 }
 
 .db-body .row:last-of-type {
@@ -114,10 +119,12 @@
   display: contents;
   grid-column: span 1;
   text-decoration: none;
+  color: #5e64e0;
 }
 
 .db-body .row a:hover {
   text-decoration: underline;
+  color: #6c72e2;
 }
 
 /* .overflow {
@@ -141,7 +148,7 @@
 .delete-tag-container .delete-tag-contents {
   display: flex;
   flex-direction: column;
-  background-color: var(--color-off-white);
+  background-color: var(--color-secondary);
   padding: 1.5rem;
   border-radius: 0.5rem;
   width: 28rem;

@@ -5,7 +5,7 @@
 
   color-scheme: light dark;
   /* rgba(255, 255, 255, 0.87) */
-  color: black;
+  color: #f4f5f7;
   background-color: #242424;
 
   font-synthesis: none;
@@ -13,27 +13,29 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  --color-primary: rgb(193, 199, 208, 0.25);
-  --color-primary-solid: rgb(193, 199, 208, 1);
-  --color-primary-lite: #dfe1e6;
-  --color-primary-lite-inactive: rgb(223, 225, 230, 0.4);
-  --color-secondary: #ebecf0;
-  --color-off-white: #f4f5f7;
+  --color-primary: #0c0e16;
+  --color-secondary: #12101b;
+  --color-secondary-lighter: #181722;
+  --color-tertiary: #2c2937;
+  --color-border: rgba(244, 245, 247, 0.04);
+
+  --color-button-darker: #1d1b24;
+
+  --color-inactive-bg: rgb(223, 225, 230, 0.4);
+  --color-inactive-text: rgb(193, 199, 208, 1);
+
+  --color-positive: #03543f;
+  --color-negative: #9a2727;
+
+  --color-font: #cdcaca;
+
+  font-size: 18px !important;
 }
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
 }
 
 body {
@@ -43,7 +45,7 @@ body {
   min-width: 320px;
   min-height: 100vh;
   /* background: url("../assets/background.jpg") no-repeat; */
-  background-color: var(--color-off-white);
+  background-color: var(--color-primary);
   background-size: cover;
   background-position: center;
 }
@@ -51,16 +53,6 @@ body {
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
-}
-
-input {
-  color: black;
-  background-color: var(--color-secondary);
-}
-
-textarea {
-  color: black;
-  background-color: var(--color-secondary);
 }
 
 button {
@@ -81,23 +73,33 @@ button:hover {
 
 .action-button {
   padding: 0.8em 1.6em;
-  background-color: var(--color-primary-lite);
-  color: black;
-  border: 1px solid rgb(0, 0, 0, 0.2);
+  background-color: var(--color-button-darker);
+  color: var(--color-font);
+  border: 1px solid var(--color-border);
   text-wrap: nowrap;
 }
 
 .action-button-inactive {
   padding: 0.8em 1.6em;
-  background-color: var(--color-primary-lite-inactive);
-  color: var(--color-primary-solid);
+  background-color: var(--color-inactive-bg);
+  color: var(--color-inactive-text);
   border: 1px solid rgb(0, 0, 0, 0.2);
+  border: 1px solid var(--color-border);
   text-wrap: nowrap;
   cursor: not-allowed;
 }
 
+.action-button-cancel {
+  padding: 0.8em 1.6em;
+  background-color: var(--color-negative);
+  color: var(--color-inactive-text);
+  border: 1px solid var(--color-border);
+  text-wrap: nowrap;
+}
+
 .action-button:hover {
-  background-color: var(--color-primary-solid);
+  background-color: var(--color-tertiary);
+  border: 1px solid var(--color-border);
 }
 
 input,
@@ -127,27 +129,18 @@ textarea {
 
 /* Style the track */
 *::-webkit-scrollbar-track {
-  background-color: var(--color-off-white); /* Set the track background color */
+  background-color: var(--color-secondary); /* Set the track background color */
   border-radius: 5px; /* Add a rounded corner to the track */
 }
 
 /* Style the thumb */
 *::-webkit-scrollbar-thumb {
-  background-color: var(--color-primary-solid); /* Set the thumb background color */
+  /* background-color: var(--color-inactive-text); Set the thumb background color */
+  background-color: #3f3c4d; /* Set the thumb background color */
   border-radius: 5px; /* Add a rounded corner to the thumb */
 }
 
 /* Style the thumb on hover */
 *::-webkit-scrollbar-thumb:hover {
-  background-color: var(--color-primary-lite); /* Change the thumb background color on hover */
-}
-
-/* Optional: Style the track piece not covered by the thumb */
-*::-webkit-scrollbar-track-piece {
-  background-color: var(--color-off-white); /* This is already set in the track, but can be customized further */
-}
-
-/* Optional: Style the corner where both scrollbars meet */
-*::-webkit-scrollbar-corner {
-  background-color: var(--color-off-white); /* Set the corner background color */
+  background-color: var(--color-tertiary); /* Change the thumb background color on hover */
 }

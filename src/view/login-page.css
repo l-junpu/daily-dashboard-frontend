@@ -1,11 +1,25 @@
+.login-header {
+  position: absolute;
+  top: 22%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  font-size: 150px;
+  font-weight: 700;
+
+  background: linear-gradient(to right, #2ecc40, #39cccc);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
 .login-container {
   /* display: flex;
   justify-content: center;
   align-items: center; */
 
   width: 420px;
-  background-color: var(--color-off-white);
-  color: black;
+  background-color: var(--color-secondary);
   border: 2px solid rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
@@ -24,7 +38,6 @@
   height: 50px;
   background-color: transparent;
   border-radius: 10px;
-  border: 1px solid rgb(164, 164, 164);
   margin: 30px 0;
 }
 
@@ -36,7 +49,8 @@
   border: 2px solid rgba(255, 255, 255, 0.2);
   border-radius: 40px;
   font-size: 16px;
-  color: rgb(93, 93, 93);
+  color: var(--color-font);
+  background-color: var(--color-tertiary);
   padding: 20px 45px 20px 20px;
 }
 
@@ -51,7 +65,7 @@ select:-webkit-autofill:hover,
 select:-webkit-autofill:focus {
   border: none;
   outline: none;
-  -webkit-box-shadow: 0 0 0px 1000px var(--color-off-white) inset;
+  -webkit-box-shadow: 0 0 0px 1000px var(--color-secondary) inset;
   -webkit-text-fill-color: #000000;
 }
 
@@ -65,25 +79,29 @@ select:-webkit-autofill:focus {
   top: 50%;
   transform: translateY(-50%);
   font-size: 16px;
+  color: var(--color-font);
 }
 
 .login-container .login-button {
   width: 100%;
   height: 45px;
-  background: var(--color-primary-lite);
-  border: none;
-  border: 1px solid rgb(0, 0, 0, 0.1);
+  background: var(--color-button-darker);
+  border: 1px solid var(--color-border);
   outline: none;
   border-radius: 40px;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
   cursor: pointer;
   font-size: 16px;
-  color: black;
+  color: var(--color-font);
   text-wrap: nowrap;
   font-weight: 700;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.login-container .login-button:hover {
+  background-color: var(--color-tertiary);
 }
 
 .login-container .register-link {
@@ -92,8 +110,12 @@ select:-webkit-autofill:focus {
   margin: 20px 0 15px 0;
 }
 
+.register-link p {
+  color: var(--color-font);
+}
+
 .register-link p a {
-  color: #0000ee;
+  color: #4d4dc0;
   text-decoration: none;
   font-weight: 600;
 }

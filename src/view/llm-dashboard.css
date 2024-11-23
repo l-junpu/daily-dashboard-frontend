@@ -18,13 +18,13 @@
 
 /* Style the track */
 .chat-history::-webkit-scrollbar-track {
-  background-color: var(--color-off-white); /* Set the track background color */
+  background-color: var(--color-secondary); /* Set the track background color */
   border-radius: 2px; /* Add a rounded corner to the track */
 }
 
 /* Style the thumb */
 .chat-history::-webkit-scrollbar-thumb {
-  background-color: var(--color-primary-solid); /* Set the thumb background color */
+  background-color: var(--color-inactive-text); /* Set the thumb background color */
   border-radius: 2px; /* Add a rounded corner to the thumb */
 }
 
@@ -35,7 +35,7 @@
   align-items: center;
   position: relative;
 
-  background-color: var(--color-off-white);
+  background-color: var(--color-secondary);
   border: 1px solid rgb(0, 0, 0, 0.2);
   border-left: none;
   height: 100%;
@@ -64,10 +64,13 @@
 .chat-zone .chat {
   padding: 20px 0px;
   text-align: left;
+  color: var(--color-font);
+  line-height: 1.8em;
 }
 
 .chat-zone .chat.user {
-  background-color: var(--color-primary-lite);
+  background-color: var(--color-button-darker);
+  color: var(--color-font);
   padding: 20px;
   border-radius: 20px;
   max-width: 80%;
@@ -79,10 +82,20 @@
 }
 
 .chat-zone code {
-  background: rgba(0, 0, 0, 0.07);
+  background-color: var(--color-button-darker);
   margin: 6px 0px;
   padding: 5px 7px;
   border-radius: 8px;
+}
+
+.chat-zone code::selection {
+  background: var(--color-tertiary);
+  color: var(--color-font);
+}
+
+.chat-zone span::selection {
+  background: var(--color-tertiary);
+  color: var(--color-font);
 }
 
 .chat-zone div {
@@ -91,7 +104,7 @@
 }
 
 .llm-dashboard-contents .footer {
-  background-color: rgba(59, 59, 59, 0.1);
+  background-color: var(--color-button-darker);
   display: flex;
   align-items: end;
   padding: 10px;
@@ -112,6 +125,7 @@
   max-height: 250px;
   border: none;
   background: none;
+  color: var(--color-font);
 }
 
 .footer .prompt-search:focus {
@@ -125,7 +139,7 @@
   width: 50px;
   height: 50px;
   background-color: rgba(83, 83, 83, 0.1);
-  color: rgb(0, 0, 0, 0.2);
+  color: rgb(0, 0, 0, 0.8);
   transition: 0.3s;
   cursor: not-allowed;
 }
@@ -135,8 +149,8 @@
   padding: 0px;
   width: 50px;
   height: 50px;
-  background-color: rgba(85, 85, 85, 0.2);
-  color: rgb(0, 0, 0, 0.7);
+  background-color: rgba(83, 83, 83, 0.2);
+  color: rgb(0, 0, 0, 0.8);
   cursor: pointer;
 }
 
@@ -154,19 +168,22 @@
 .create-chat-container .new-chat-contents {
   display: flex;
   flex-direction: column;
-  background-color: var(--color-off-white);
+  background-color: var(--color-secondary);
+  border: 1px solid var(--color-border);
   padding: 1.5rem;
   border-radius: 0.5rem;
   width: 28rem;
 }
 
 .new-chat-contents .chat-name {
-  padding: 10px;
+  padding: 15px;
   margin-top: 1.5rem;
   font-size: 16px;
 
   border-radius: 10px;
-  border: 1px solid rgb(0, 0, 0, 0.2);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-button-darker);
+  color: var(--color-font);
 }
 
 .new-chat-contents .chat-name:focus {

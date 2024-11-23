@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 
-import FetchAPI from "../api/helper";
 import IconButton from "../base-component/icon-button/icon-button";
 
 // For Secondary Navbar
@@ -140,7 +139,9 @@ const LLMInspectDBView = () => {
     <div className="dashboard-container">
       <ToastContainer position="bottom-right" />
       {/* Dashboard Header */}
-      <header className="dashboard-header">HEADER</header>
+      <header className="dashboard-header">
+        <div className="title">SOBA AI</div>
+      </header>
       <div className="dashboard-body">
         {/* Redirection to the 2 main applications */}
         <nav className="primary-navbar">
@@ -167,7 +168,7 @@ const LLMInspectDBView = () => {
               onClick={() => {
                 setDeleteTag(true);
               }}
-              className={enableDeleteTagButton ? "action-button" : "action-button-inactive"}
+              className={enableDeleteTagButton ? "action-button-cancel" : "action-button-inactive"}
               disabled={!enableDeleteTagButton}
             >
               🗑️ Delete Tag

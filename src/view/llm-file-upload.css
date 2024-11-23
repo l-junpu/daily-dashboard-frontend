@@ -10,6 +10,7 @@
   gap: 20px;
   padding: 20px;
   overflow-y: hidden;
+  background-color: var(--color-secondary);
 }
 
 .file-dashboard-contents .file-dropzone {
@@ -18,8 +19,9 @@
   width: 50%;
   min-width: 400px;
   background: none;
-  border: 3px dashed rgb(0, 0, 0, 0.2);
-  background-color: var(--color-secondary);
+  border: 3px dashed rgb(255, 255, 255, 0.1);
+  background-color: var(--color-button-darker);
+  color: var(--color-font);
   border-radius: 20px;
   padding: 30px;
 
@@ -36,7 +38,8 @@
   min-height: 200px;
   width: 50%;
   min-width: 400px;
-  border: 1px solid rgb(0, 0, 0, 0.15);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-button-darker);
   border-radius: 20px;
   padding: 10px;
   box-sizing: border-box;
@@ -71,6 +74,7 @@
   height: 50px;
   min-height: 50px;
   background-color: rgb(128, 128, 128, 0.2);
+  color: var(--color-font);
 }
 
 .file-info .file-name {
@@ -78,6 +82,7 @@
   text-align: left;
   overflow-x: hidden;
   text-overflow: ellipsis;
+  color: var(--color-font);
 }
 
 .file-info .remove-btn {
@@ -115,7 +120,9 @@
 .upload-files-container .upload-files-contents {
   display: flex;
   flex-direction: column;
-  background-color: var(--color-off-white);
+  background-color: var(--color-secondary);
+  border: 1px solid var(--color-border);
+  color: var(--color-font);
   padding: 1.5rem;
   border-radius: 0.5rem;
   width: 28rem;
@@ -123,11 +130,13 @@
 
 .upload-files-contents .tag-name {
   margin-top: 10px;
-  padding: 10px;
-  font-size: 16px;
+  padding: 15px;
+  font-size: 18px;
 
   border-radius: 10px;
-  border: 1px solid rgb(0, 0, 0, 0.2);
+  background-color: var(--color-button-darker);
+  color: var(--color-font);
+  border: 1px solid var(--color-border);
 }
 
 .upload-files-contents .tag-name:focus {

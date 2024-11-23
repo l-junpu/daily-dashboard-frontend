@@ -13,7 +13,7 @@ import { toast, ToastContainer } from "react-toastify";
 
 import rehypeHighlight from "rehype-highlight";
 import ReactMarkdown from "react-markdown";
-import "highlight.js/styles/base16/papercolor-light.css";
+import "highlight.js/styles/base16/ros-pine.css";
 
 // For Secondary Navbar
 interface ButtonProps {
@@ -38,7 +38,6 @@ interface Conversation {
 
 const LLMDashboardView = () => {
   const navigate = useNavigate();
-  const endRef = useRef<HTMLDivElement | null>(null);
 
   // Username
   const [username, setUsername] = useState<string | null>(null);
@@ -120,13 +119,6 @@ const LLMDashboardView = () => {
 
     getConversationsFromUser();
   }, [username]);
-
-  useEffect(() => {
-    // Scroll to bottom
-    if (endRef && endRef.current) {
-      endRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [messages]);
 
   // Handle Create Chat
   const handleCreateChat = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -319,7 +311,9 @@ const LLMDashboardView = () => {
       <ToastContainer position="bottom-right" />
       <div className="dashboard-container">
         {/* Dashboard Header */}
-        <header className="dashboard-header">HEADER</header>
+        <header className="dashboard-header">
+          <div className="title">SOBA AI</div>
+        </header>
         <div className="dashboard-body">
           {/* Redirection to the 2 main applications */}
           <nav className="primary-navbar">
@@ -336,6 +330,9 @@ const LLMDashboardView = () => {
                 </button>
               ))}
             </div>
+
+            <hr className="secondary-navbar-hr"></hr>
+
             <p style={{ borderTop: "1px solid rgb(0,0,0,0.2)" }} className="prefix">
               CHAT HISTORY
             </p>
@@ -375,28 +372,29 @@ const LLMDashboardView = () => {
                   rowComponent={(index) => (
                     <p key={index} className={messages[index].role == "user" ? "chat user" : "chat"}>
                       {messages[index].role == "assistant" && <h3>LLM served by DouDou and Soba</h3>}
-                      <ReactMarkdown
-                        children={messages[index].content}
-                        rehypePlugins={[[rehypeHighlight, { detect: true, plainText: ["makefile", "bash"] }]]}
-                      ></ReactMarkdown>
+                      <ReactMarkdown children={messages[index].content} rehypePlugins={[[rehypeHighlight, { detect: true, plainText: ["makefile", "bash"] }]]}></ReactMarkdown>
                     </p>
                   )}
+                  isConversationPage={true}
                 />
               </div>
             </div>
-            <form className="footer" onSubmit={handleUserPrompt}>
-              <TextArea
-                placeholder="Ask a question..."
-                cssStyle="prompt-search"
-                text={currentPrompt}
-                onChange={setCurrentPrompt}
-                onEnterDown={handleUserPrompt}
-                isLocked={awaitingResponse}
-              />
-              <button type="submit" id="submit-prompt" disabled={currentPrompt.length > 0 ? false : true} className={currentPrompt ? "submit ok" : "submit"}>
-                🡩
-              </button>
-            </form>
+
+            {activeTitleId != null && (
+              <form className="footer" onSubmit={handleUserPrompt}>
+                <TextArea
+                  placeholder="Ask a question..."
+                  cssStyle="prompt-search"
+                  text={currentPrompt}
+                  onChange={setCurrentPrompt}
+                  onEnterDown={handleUserPrompt}
+                  isLocked={awaitingResponse}
+                />
+                <button type="submit" id="submit-prompt" disabled={currentPrompt.length > 0 ? false : true} className={currentPrompt ? "submit ok" : "submit"}>
+                  🡩
+                </button>
+              </form>
+            )}
           </main>
         </div>
         {/* Create New Chat Page */}
@@ -408,24 +406,19 @@ const LLMDashboardView = () => {
             }}
           >
             <div className="new-chat-contents">
-              <h2>Create New Chat</h2>
-              <input
-                type="text"
-                placeholder="New Chat Name"
-                name="title"
-                className="chat-name"
-                value={newTitle}
-                onChange={(e) => setNewTitle(e.target.value)}
-              />
+              <h2 style={{ color: "var(--color-font)" }}>Create New Chat</h2>
+              <input type="text" placeholder="New Chat Name" name="title" className="chat-name" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} />
               <div className="footer">
-                <button
-                  type="submit"
-                  className={newTitle.length > 0 ? "action-button" : "action-button-inactive"}
-                  disabled={newTitle.length > 0 ? false : true}
-                >
+                <button type="submit" className={newTitle.length > 0 ? "action-button" : "action-button-inactive"} disabled={newTitle.length > 0 ? false : true}>
                   Create Chat
                 </button>
-                <button onClick={() => setCreateChat(false)} className="action-button">
+                <button
+                  onClick={() => {
+                    setCreateChat(false);
+                    setNewTitle("");
+                  }}
+                  className="action-button-cancel"
+                >
                   Cancel
                 </button>
               </div>

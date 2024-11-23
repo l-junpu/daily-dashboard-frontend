@@ -160,7 +160,9 @@ const LLMFileUploadView = () => {
     <div className="dashboard-container">
       <ToastContainer position="bottom-right" />
       {/* Dashboard Header */}
-      <header className="dashboard-header">HEADER</header>
+      <header className="dashboard-header">
+        <div className="title">SOBA AI</div>
+      </header>
       <div className="dashboard-body">
         {/* Redirection to the 2 main applications */}
         <nav className="primary-navbar">
@@ -182,8 +184,8 @@ const LLMFileUploadView = () => {
 
         {/* Main File Upload Contents */}
         <main className="file-dashboard-contents">
-          <h2>{connectionStatus ? "✅ Connected" : "⚠️ Disconnected"}</h2>
-          <h4>{lastStatus}</h4>
+          <h2 style={{ color: "var(--color-font)" }}>{connectionStatus ? "✅ Connected" : "⚠️ Disconnected"}</h2>
+          <h4 style={{ color: "var(--color-font)" }}>{lastStatus}</h4>
           <div {...getRootProps({ className: "file-dropzone" })}>
             <p>Drag & drop some files here, or click to select files</p>
             <button className="action-button">Select Files</button>
@@ -211,7 +213,7 @@ const LLMFileUploadView = () => {
               Upload
             </button>
             <button
-              className="action-button"
+              className="action-button-cancel"
               onClick={() => {
                 if (files.length) toast.warn("Removed all files");
                 setFiles([]);
@@ -238,7 +240,7 @@ const LLMFileUploadView = () => {
                 <button type="submit" className={canUploadFiles ? "action-button" : "action-button-inactive"} disabled={!canUploadFiles}>
                   Upload Files
                 </button>
-                <button onClick={() => handleCancelUpload()} className="action-button">
+                <button onClick={() => handleCancelUpload()} className="action-button-cancel">
                   Cancel
                 </button>
               </div>

@@ -44,7 +44,7 @@ const TaskCard = ({ taskId, title, contents, status, lastModified, createdOn, on
   return (
     <div className="task-card">
       {/* Title */}
-      <h3>{title}</h3>
+      <h3 style={{ color: "var(--color-font)" }}>{title}</h3>
       {/* contents */}
       <p className="contents">{contents}</p>
       <div className="date-container">

@@ -77,11 +77,12 @@ const LoginPageView = () => {
     <>
       <ToastContainer position="bottom-right" />
       {/* Container for the entire login or registration form */}
+      <header className="login-header">SOBA AI</header>
       <div className="login-container">
         {/* Form element that handles submission with the handleLoginOrRegister function */}
         <form onSubmit={(e) => handleLoginOrRegister(e)}>
           {/* Header that dynamically changes between "Register" and "Login" based on the register state */}
-          <h1>{register ? "Register" : "Login"}</h1>
+          <h1 style={{ color: "var(--color-font)" }}>{register ? "Register" : "Login"}</h1>
           {/* Input field for the username */}
           <div className="login-input-box">
             <input name="username" type="text" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Username" required />

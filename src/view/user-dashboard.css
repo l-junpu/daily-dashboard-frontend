@@ -3,29 +3,40 @@
   flex-direction: column;
   height: 100vh;
   width: 100vw;
-  background-color: var(--color-off-white);
+  background-color: var(--color-primary);
 }
 
 .dashboard-header {
   display: flex;
   width: 100%;
-  height: 50px;
-  background-color: var(--color-off-white);
+  height: 70px;
+  background-color: var(--color-primary);
+  color: var(--color-font);
+}
+
+.dashboard-header .title {
+  background: linear-gradient(to right, #2ecc40, #39cccc);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  font-size: 44px;
+  font-weight: 700;
+  margin-left: 0.65rem;
 }
 
 .dashboard-body {
   display: flex;
   width: 100%;
   /* 50px is from .dashboard-header height */
-  height: calc(100vh - 50px);
+  height: calc(100vh - 70px);
 }
 
 .primary-navbar {
   width: 5rem;
   min-width: 5rem;
   height: 100%;
-  background-color: var(--color-off-white);
-  border: 1px solid rgb(0, 0, 0, 0.2);
+  background-color: var(--color-primary);
+  border: 1px solid var(--color-border);
   border-left: none;
 }
 
@@ -35,31 +46,53 @@
   width: 3.7rem;
   height: 3.7rem;
   margin: 0.65rem 0.65rem 0 0.65rem;
-  background-color: var(--color-off-white);
-  border: 1px solid rgb(0, 0, 0, 0.1);
+  background-color: var(--color-primary);
+  border: 1px solid var(--color-border);
+}
+
+.primary-navbar .button:hover {
+  background-color: var(--color-button-darker);
 }
 
 .primary-navbar .primary-selected {
   border-color: rgb(0, 0, 0, 0.2);
-  background-color: var(--color-primary-lite);
+  background-color: var(--color-button-darker);
+  border: 1px solid var(--color-border);
 }
 
 .secondary-navbar {
   display: flex;
   flex-direction: column;
-  width: 14rem;
-  min-width: 14rem;
+  width: 18rem;
+  min-width: 18rem;
   height: 100%;
   padding-bottom: 13px;
-  background-color: var(--color-off-white);
-  border: 1px solid rgb(0, 0, 0, 0.2);
+  background-color: var(--color-primary);
+  border: 1px solid var(--color-border);
   border-left: none;
 }
 
+.secondary-navbar .secondary-navbar-hr {
+  border: none;
+  height: 2px;
+  background-color: #ddd;
+  opacity: 0.1;
+  border-radius: 5px;
+  margin: 20px 0;
+}
+
 .secondary-navbar .prefix {
-  text-align: left;
+  align-self: flex-start;
   padding: 20px 10px 0px 20px;
+  font-size: 20px;
   font-weight: 700;
+  width: auto;
+  /* color: var(--color-font); */
+
+  background: linear-gradient(to right, #2ecc40, #39cccc);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
 }
 
 .secondary-navbar .button {
@@ -69,7 +102,13 @@
   margin: 10px 10px 0px 10px;
   text-align: left;
   background-color: transparent;
-  color: rgb(129, 129, 129);
+  /* color: rgb(129, 129, 129); */
+  color: var(--color-font);
+}
+
+.secondary-navbar .button:hover {
+  background-color: var(--color-button-darker);
+  border: 1px solid var(--color-border);
 }
 
 .secondary-navbar .selected-button {
@@ -78,17 +117,19 @@
   width: calc(100% - 20px);
   margin: 10px 10px 0 10px;
   text-align: left;
-  background-color: var(--color-primary-lite);
+  background-color: var(--color-button-darker);
   border-color: rgb(0, 0, 0, 0.2);
-  color: black;
+  border: 1px solid var(--color-border);
+  color: var(--color-font);
 }
 
 .dashboard-contents {
-  background-color: var(--color-off-white);
-  border: 1px solid rgb(0, 0, 0, 0.2);
+  background-color: var(--color-secondary);
+  border: 1px solid var(--color-border);
   border-left: none;
   flex: 1;
   height: 100%;
+  overflow-x: hidden;
 }
 
 .dashboard-contents .header {
@@ -104,19 +145,14 @@
   padding: 24px 16px;
   font-size: 16px;
   border-radius: 10px;
-  border: 1px solid rgb(0, 0, 0, 0.2);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-tertiary);
+  color: var(--color-font);
 }
 
 .header .search-bar:focus {
   outline: none;
 }
-
-/* .header .add-button {
-  padding: 0.6em 1em;
-  background-color: var(--color-primary-lite);
-  color: black;
-  border: 1px solid rgb(0, 0, 0, 0.2);
-} */
 
 .header .add-button-hover {
   left: auto !important; /* Positions the hover text to the right of the button */
@@ -132,7 +168,7 @@
   gap: 0.5rem;
   max-height: 400px;
   padding-top: 0.5rem;
-  margin: 0.5rem;
+  margin: 1rem;
 }
 
 .dashboard-container .create-task-container {
@@ -148,19 +184,22 @@
 .create-task-container .new-task-contents {
   display: flex;
   flex-direction: column;
-  background-color: var(--color-off-white);
-  padding: 1.5rem;
+  background-color: var(--color-secondary);
+  border: 1px solid var(--color-border);
   border-radius: 0.5rem;
+  padding: 1.5rem;
   width: 48rem;
 }
 
 .new-task-contents .title {
-  padding: 10px;
+  padding: 15px;
   margin-top: 1.5rem;
   font-size: 16px;
 
   border-radius: 10px;
-  border: 1px solid rgb(0, 0, 0, 0.2);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-button-darker);
+  color: var(--color-font);
 }
 
 .new-task-contents .title:focus {
@@ -168,7 +207,7 @@
 }
 
 .new-task-contents .contents {
-  padding: 10px;
+  padding: 15px;
   margin-top: 1rem;
   font-size: 16px;
   width: 100%;
@@ -180,7 +219,9 @@
   resize: none;
 
   border-radius: 10px;
-  border: 1px solid rgb(0, 0, 0, 0.2);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-button-darker);
+  color: var(--color-font);
 }
 
 .new-task-contents .contents:focus {
