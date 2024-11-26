@@ -14,6 +14,8 @@ import { toast, ToastContainer } from "react-toastify";
 import rehypeHighlight from "rehype-highlight";
 import ReactMarkdown from "react-markdown";
 import "highlight.js/styles/base16/ros-pine.css";
+import RemovableButton from "../base-component/removable-button/removable-button";
+import { getTitlesFromUser } from "../api/llm-dashboard-api";
 
 // For Secondary Navbar
 interface ButtonProps {
@@ -55,6 +57,29 @@ const LLMDashboardView = () => {
   const [awaitingResponse, setAwaitingResponse] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
 
+  const [tags, setTags] = useState<string[]>([
+    "Fake Tag",
+    "Fake Tag",
+    "Fake Tag",
+    "Fake Tag",
+    "Fake Tag",
+    "Fake Tag",
+    "Fake Tag",
+  ]);
+  const [docs, setDocs] = useState<string[]>([
+    "Fake Document",
+    "Fake Document",
+    "Fake Document",
+    "Fake Document",
+    "Fake Document",
+    "Fake Document",
+  ]);
+  const [selectedTags, setSelectedTags] = useState<string[]>(["Fake Tag"]);
+  const [selectedDocs, setSelectedDocs] = useState<string[]>([]);
+
+  const [selectedSecondaryButton, setSelectedSecondaryButton] = useState(0);
+  const [selectedTitleIndex, setSelectedTitleIndex] = useState(-1);
+
   // Active Buttons
   const secondaryButtonProps: ButtonProps[] = [
     { text: "📋 Conversations", onClick: () => {} },
@@ -71,8 +96,6 @@ const LLMDashboardView = () => {
       },
     },
   ];
-  const [selectedSecondaryButton, setSelectedSecondaryButton] = useState(0);
-  const [selectedTitleIndex, setSelectedTitleIndex] = useState(-1);
 
   // Retrieve necessary information on initial mount
   useEffect(() => {
@@ -82,42 +105,20 @@ const LLMDashboardView = () => {
     }
   }, []);
 
-  // Retrieve Conversations on Username Update
+  // Retrieve Titles on Username Update
   useEffect(() => {
-    const getConversationsFromUser = async () => {
-      if (!username) return;
+    if (username === null) return;
 
-      try {
-        const response = await FetchResponse("http://localhost:8080/get_convos", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            username: username,
-          }),
-        });
-
-        if (response == null) {
-          toast.error("Unable to connect to server");
-          return;
-        } else {
-          switch (response.status) {
-            case HttpStatusCode.OK:
-              const data = await response.json();
-              setTitles(data.convoDetails);
-              break;
-            default:
-              toast.error(`Server side error (Unable to retrieve conversations): ${response.status}`);
-              return;
-          }
-        }
-      } catch (error) {
-        console.error(error);
+    const initialize = async () => {
+      const [statusMessage, titles] = await getTitlesFromUser(username);
+      if (titles === null) {
+        toast.error(statusMessage);
+      } else {
+        setTitles(titles);
       }
     };
 
-    getConversationsFromUser();
+    initialize();
   }, [username]);
 
   // Handle Create Chat
@@ -306,6 +307,38 @@ const LLMDashboardView = () => {
     }
   };
 
+  // Handle User Retrieving Conversation History
+  const handleGetTagsAndDocumentsFromChroma = async () => {
+    return;
+    if (!username) return;
+
+    try {
+      const response = await FetchResponse("http://localhost:8080/get_tags_and_documents", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response == null) {
+        toast.error("Unable to connect to server");
+        return;
+      } else {
+        switch (response.status) {
+          case HttpStatusCode.OK:
+            const responseMessages = await response.json();
+            // Save tags and documents
+            break;
+          default:
+            toast.error(`Server side error: ${response.status}`);
+            return;
+        }
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <>
       <ToastContainer position="bottom-right" />
@@ -317,7 +350,12 @@ const LLMDashboardView = () => {
         <div className="dashboard-body">
           {/* Redirection to the 2 main applications */}
           <nav className="primary-navbar">
-            <IconButton primaryText="📋" hoverText="Tasks" cssStyle="button" onClick={() => navigate("/dashboard/tasks", { replace: true })} />
+            <IconButton
+              primaryText="📋"
+              hoverText="Tasks"
+              cssStyle="button"
+              onClick={() => navigate("/dashboard/tasks", { replace: true })}
+            />
             <IconButton primaryText="💻" hoverText="LLM" cssStyle="button primary-selected" onClick={() => {}} />
           </nav>
           {/* Redirections to the different Task pages */}
@@ -325,7 +363,11 @@ const LLMDashboardView = () => {
             <p className="prefix">DASHBOARD</p>
             <div style={{ marginBottom: "6px" }}>
               {secondaryButtonProps.map((button, index) => (
-                <button key={index} className={selectedSecondaryButton === index ? "selected-button" : "button"} onClick={button.onClick}>
+                <button
+                  key={index}
+                  className={selectedSecondaryButton === index ? "selected-button" : "button"}
+                  onClick={button.onClick}
+                >
                   {button.text}
                 </button>
               ))}
@@ -336,7 +378,13 @@ const LLMDashboardView = () => {
             <p style={{ borderTop: "1px solid rgb(0,0,0,0.2)" }} className="prefix">
               CHAT HISTORY
             </p>
-            <button className="selected-button" onClick={() => setCreateChat(true)}>
+            <button
+              className="selected-button"
+              onClick={() => {
+                setCreateChat(true);
+                handleGetTagsAndDocumentsFromChroma();
+              }}
+            >
               ✚ New Chat
             </button>
 
@@ -372,7 +420,10 @@ const LLMDashboardView = () => {
                   rowComponent={(index) => (
                     <p key={index} className={messages[index].role == "user" ? "chat user" : "chat"}>
                       {messages[index].role == "assistant" && <h3>LLM served by DouDou and Soba</h3>}
-                      <ReactMarkdown children={messages[index].content} rehypePlugins={[[rehypeHighlight, { detect: true, plainText: ["makefile", "bash"] }]]}></ReactMarkdown>
+                      <ReactMarkdown
+                        children={messages[index].content}
+                        rehypePlugins={[[rehypeHighlight, { detect: true, plainText: ["makefile", "bash"] }]]}
+                      ></ReactMarkdown>
                     </p>
                   )}
                   isConversationPage={true}
@@ -390,7 +441,12 @@ const LLMDashboardView = () => {
                   onEnterDown={handleUserPrompt}
                   isLocked={awaitingResponse}
                 />
-                <button type="submit" id="submit-prompt" disabled={currentPrompt.length > 0 ? false : true} className={currentPrompt ? "submit ok" : "submit"}>
+                <button
+                  type="submit"
+                  id="submit-prompt"
+                  disabled={currentPrompt.length > 0 ? false : true}
+                  className={currentPrompt ? "submit ok" : "submit"}
+                >
                   🡩
                 </button>
               </form>
@@ -407,9 +463,48 @@ const LLMDashboardView = () => {
           >
             <div className="new-chat-contents">
               <h2 style={{ color: "var(--color-font)" }}>Create New Chat</h2>
-              <input type="text" placeholder="New Chat Name" name="title" className="chat-name" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} />
+              <input
+                type="text"
+                placeholder="New Chat Name"
+                name="title"
+                className="chat-name"
+                value={newTitle}
+                onChange={(e) => setNewTitle(e.target.value)}
+              />
+              <h4>Add Document Tags</h4>
+              <div className="tag-control">
+                <select className="dropdown-box">
+                  {tags.map((tag, index) => (
+                    <option key={index}>{tag}</option>
+                  ))}
+                </select>
+                <button className="action-button">✚ Add Tag</button>
+              </div>
+              <div className="tag-display">
+                {selectedTags.map((tag, index) => (
+                  <RemovableButton idx={index} name={tag} removeItem={(x: string) => {}} />
+                ))}
+              </div>
+              <h4>Add Documents</h4>
+              <div className="tag-control">
+                <select className="dropdown-box">
+                  {docs.map((tag, index) => (
+                    <option key={index}>{tag}</option>
+                  ))}
+                </select>
+                <button className="action-button">✚ Add Doc</button>
+              </div>
+              <div className="tag-display">
+                {selectedDocs.map((tag, index) => (
+                  <RemovableButton idx={index} name={tag} removeItem={(x: string) => {}} />
+                ))}
+              </div>
               <div className="footer">
-                <button type="submit" className={newTitle.length > 0 ? "action-button" : "action-button-inactive"} disabled={newTitle.length > 0 ? false : true}>
+                <button
+                  type="submit"
+                  className={newTitle.length > 0 ? "action-button" : "action-button-inactive"}
+                  disabled={newTitle.length > 0 ? false : true}
+                >
                   Create Chat
                 </button>
                 <button
