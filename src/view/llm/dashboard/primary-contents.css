@@ -1,0 +1,125 @@
+.llm-dashboard-contents {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+
+  background-color: var(--color-secondary);
+  border: 1px solid rgb(0, 0, 0, 0.2);
+  border-left: none;
+  height: 100%;
+}
+
+.llm-dashboard-contents .conversation-container {
+  flex: 1;
+  /* 100% - Footer - Margin (Top + Bot 20px) */
+  max-height: calc(100% - 4rem - 40px);
+  margin: 20px;
+  display: flex;
+  width: 100%;
+  overflow-y: auto;
+  justify-content: center;
+}
+
+.conversation-container .chat-zone {
+  width: 100%;
+  padding: 20px;
+  max-width: max(50vw, 900px);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.chat-zone .chat {
+  padding: 20px 0px;
+  text-align: left;
+  color: var(--color-font);
+  line-height: 1.8em;
+}
+
+.chat-zone .chat.user {
+  background-color: var(--color-button-darker);
+  color: var(--color-font);
+  padding: 20px;
+  border-radius: 20px;
+  max-width: 80%;
+  align-self: flex-end;
+}
+
+.chat-zone h3 {
+  margin-bottom: 5px;
+}
+
+.chat-zone code {
+  background-color: var(--color-button-darker);
+  margin: 6px 0px;
+  padding: 5px 7px;
+  border-radius: 8px;
+}
+
+.chat-zone code::selection {
+  background: var(--color-tertiary);
+  color: var(--color-font);
+}
+
+.chat-zone span::selection {
+  background: var(--color-tertiary);
+  color: var(--color-font);
+}
+
+.chat-zone div {
+  display: flex;
+  flex-direction: column;
+}
+
+.llm-dashboard-contents .footer {
+  background-color: var(--color-button-darker);
+  display: flex;
+  align-items: end;
+  padding: 10px;
+  margin-bottom: 15px;
+  width: 90%;
+  gap: 10px;
+  max-width: max(50vw, 900px);
+  border-radius: 40px;
+  height: fit-content;
+}
+
+.footer .prompt-search {
+  flex: 1;
+  resize: none;
+  overflow: auto;
+  padding: 0px 20px 0 20px;
+  min-height: 20px;
+  max-height: 250px;
+  border: none;
+  background: none;
+  color: var(--color-font);
+}
+
+.footer .prompt-search:focus {
+  border: none;
+  outline: none;
+}
+
+.footer .submit {
+  border-radius: 40px;
+  padding: 0px;
+  width: 50px;
+  height: 50px;
+  background-color: rgba(83, 83, 83, 0.1);
+  color: rgb(0, 0, 0, 0.8);
+  transition: 0.3s;
+  cursor: not-allowed;
+}
+
+.footer .submit.ok {
+  border-radius: 40px;
+  padding: 0px;
+  width: 50px;
+  height: 50px;
+  background-color: rgba(83, 83, 83, 0.2);
+  color: rgb(0, 0, 0, 0.8);
+  cursor: pointer;
+}

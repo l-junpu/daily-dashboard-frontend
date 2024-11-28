@@ -1,0 +1,34 @@
+.secondary-navbar .button-text-wrap {
+  display: block;
+  text-wrap: nowrap;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.secondary-navbar .chat-history {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.chat-history::-webkit-scrollbar {
+  width: 3px; /* Adjust the width of the scrollbar */
+  height: 3px; /* Adjust the height of the scrollbar */
+}
+
+/* Style the track */
+.chat-history::-webkit-scrollbar-track {
+  background-color: var(--color-secondary); /* Set the track background color */
+  border-radius: 2px; /* Add a rounded corner to the track */
+}
+
+/* Style the thumb */
+.chat-history::-webkit-scrollbar-thumb {
+  background-color: var(--color-inactive-text); /* Set the thumb background color */
+  border-radius: 2px; /* Add a rounded corner to the thumb */
+}
+
+.test-virtualized-list {
+  display: flex !important;
+  width: 800px;
+}
