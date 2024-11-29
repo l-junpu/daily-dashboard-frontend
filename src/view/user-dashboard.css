@@ -29,6 +29,7 @@
   width: 100%;
   /* 50px is from .dashboard-header height */
   height: calc(100vh - 70px);
+  position: relative;
 }
 
 .primary-navbar {

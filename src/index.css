@@ -28,6 +28,7 @@
   --color-negative: #9a2727;
 
   --color-font: #cdcaca;
+  --color-font-inactive: #929292;
 
   font-size: 18px !important;
 }
@@ -83,7 +84,6 @@ button:hover {
   padding: 0.8em 1.6em;
   background-color: var(--color-inactive-bg);
   color: var(--color-inactive-text);
-  border: 1px solid rgb(0, 0, 0, 0.2);
   border: 1px solid var(--color-border);
   text-wrap: nowrap;
   cursor: not-allowed;

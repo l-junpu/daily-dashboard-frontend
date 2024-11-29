@@ -1,3 +1,7 @@
+import "./scroll-view-component.css";
+import { useRef, useState } from "react";
+import { createPortal } from "react-dom";
+
 import VirtualizedList from "../virtualized-list/virtualized-list";
 
 interface ScrollViewComponentProps {
@@ -9,6 +13,7 @@ interface ScrollViewComponentProps {
   onClickListItem: (index: number) => void;
   getListItemContents: (listItem: any) => string;
   getListItemStyle: (listItem: any) => string;
+  toggleMenu: (event: React.MouseEvent<HTMLButtonElement>, status: boolean) => void;
 }
 
 export const ScrollViewComponent = ({
@@ -20,6 +25,7 @@ export const ScrollViewComponent = ({
   onClickListItem,
   getListItemContents,
   getListItemStyle,
+  toggleMenu,
 }: ScrollViewComponentProps) => {
   return (
     <>
@@ -36,9 +42,14 @@ export const ScrollViewComponent = ({
         <VirtualizedList
           rowCount={listItems.length}
           rowComponent={(index) => (
-            <button key={index} className={getListItemStyle(listItems[index])} onClick={() => onClickListItem(index)}>
-              <span className="button-text-wrap">{getListItemContents(listItems[index])}</span>
-            </button>
+            <div className={getListItemStyle(listItems[index])}>
+              <button key={index} className="primary-button-text" onClick={() => onClickListItem(index)}>
+                <span className="button-text-wrap">{getListItemContents(listItems[index])}</span>
+              </button>
+              <button className="secondary-button-text" onClick={(e) => toggleMenu(e, true)}>
+                ☰
+              </button>
+            </div>
           )}
         />
       </div>

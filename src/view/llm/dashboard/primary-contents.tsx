@@ -1,4 +1,5 @@
 import React from "react";
+import "./primary-contents.css";
 
 // Markdown
 import rehypeHighlight from "rehype-highlight";
@@ -55,12 +56,7 @@ export const LLMPrimaryContents = ({ toast }: LLMPrimaryContentsProps) => {
             onEnterDown={() => handleUserPrompt(toast, context)}
             isLocked={awaitingResponse}
           />
-          <button
-            type="submit"
-            id="submit-prompt"
-            disabled={currentPrompt.length > 0 ? false : true}
-            className={currentPrompt ? "submit ok" : "submit"}
-          >
+          <button type="submit" id="submit-prompt" disabled={currentPrompt.length > 0 ? false : true} className={currentPrompt ? "submit ok" : "submit"}>
             🡩
           </button>
         </form>

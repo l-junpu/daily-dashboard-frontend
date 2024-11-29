@@ -1,0 +1,36 @@
+.chat-history {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.chat-history::-webkit-scrollbar {
+  width: 3px; /* Adjust the width of the scrollbar */
+  height: 3px; /* Adjust the height of the scrollbar */
+}
+
+/* Style the track */
+.chat-history::-webkit-scrollbar-track {
+  background-color: var(--color-secondary); /* Set the track background color */
+  border-radius: 2px; /* Add a rounded corner to the track */
+}
+
+/* Style the thumb */
+.chat-history::-webkit-scrollbar-thumb {
+  background-color: var(--color-inactive-text); /* Set the thumb background color */
+  border-radius: 2px; /* Add a rounded corner to the thumb */
+}
+
+.chat-history .primary-button-text {
+  flex: 1;
+  background: none;
+  text-align: left;
+}
+
+.chat-history .secondary-button-text {
+  background: none;
+  color: var(--color-font-inactive);
+}
+
+.chat-history .secondary-button-text:hover {
+  color: var(--color-font);
+}

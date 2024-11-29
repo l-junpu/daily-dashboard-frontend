@@ -1,33 +1,24 @@
 import "./llm-dashboard.css";
 
 // General use
-import React from "react";
-import { useEffect, useState } from "react";
+import React, { useState } from "react";
+import { useEffect } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-// Markdown
-import rehypeHighlight from "rehype-highlight";
-import ReactMarkdown from "react-markdown";
-import "highlight.js/styles/base16/ros-pine.css";
-
 import IconButton from "../../../base-component/icon-button/icon-button";
-import TextArea from "../../../base-component/text-area/text-area";
-import VirtualizedList from "../../../base-component/virtualized-list/virtualized-list";
 
-import { handleGetTagsAndDocumentsFromChroma, handleGetTitlesFromUserApi, handleRetrieveConvoHistory, handleUserPrompt } from "../../../api/llm-dashboard-api";
+import {
+  handleGetTagsAndDocumentsFromChroma,
+  handleGetTitlesFromUserApi,
+  handleRetrieveConvoHistory,
+} from "../../../api/llm-dashboard-api";
 
 import { LLMDashboardContext } from "../../../context/llm-dashboard/context";
 import { CreateChatView } from "./create-chat";
 import { LLMPrimaryContents } from "./primary-contents";
 import { ScrollViewComponent } from "../../../base-component/scroll-view-component/scroll-view-component";
 import { TitleInfo } from "../../../data/llm-data";
-
-// For Secondary Navbar
-interface ButtonProps {
-  text: string;
-  onClick: () => void;
-}
 
 const LLMDashboardView = () => {
   const context = React.useContext(LLMDashboardContext);
@@ -37,6 +28,16 @@ const LLMDashboardView = () => {
   }
 
   const { navigate, username, setUsername, createChat, setCreateChat, titles, setTitles, activeTitleId, setActiveTitleId } = context;
+
+  // Testing Menu Popup
+  const [activeMenu, setActiveMenu] = useState(false);
+  const [anchor, setAnchorPoint] = useState({ x: 0, y: 0 });
+
+  const handleToggleMenu = (event: React.MouseEvent<HTMLButtonElement>, status: boolean) => {
+    event.preventDefault();
+    setAnchorPoint({ x: event.clientX, y: event.clientY });
+    setActiveMenu(status);
+  };
 
   // Retrieve necessary information on initial mount
   useEffect(() => {
@@ -70,7 +71,12 @@ const LLMDashboardView = () => {
         <div className="dashboard-body">
           {/* Redirection to the 2 main applications */}
           <nav className="primary-navbar">
-            <IconButton primaryText="📋" hoverText="Tasks" cssStyle="button" onClick={() => navigate("/dashboard/tasks", { replace: true })} />
+            <IconButton
+              primaryText="📋"
+              hoverText="Tasks"
+              cssStyle="button"
+              onClick={() => navigate("/dashboard/tasks", { replace: true })}
+            />
             <IconButton primaryText="💻" hoverText="LLM" cssStyle="button primary-selected" onClick={() => {}} />
           </nav>
 
@@ -117,14 +123,16 @@ const LLMDashboardView = () => {
                 return item.title;
               }}
               getListItemStyle={(item: TitleInfo) => {
-                return activeTitleId === item.id ? "selected-button" : "button";
+                return activeTitleId === item.id ? "selected-conversation-title" : "default-conversation-title";
               }}
+              toggleMenu={handleToggleMenu}
             />
           </nav>
 
           {/* Main Task Contents */}
           <LLMPrimaryContents toast={toast} />
         </div>
+        {activeMenu && <div style={{ position: "absolute", left: "23rem", top: anchor.y }}>MEOW MEOW</div>}
         {/* Create New Chat Page */}
         {createChat && <CreateChatView toast={toast} />}
       </div>

@@ -6,29 +6,37 @@
   white-space: nowrap;
 }
 
-.secondary-navbar .chat-history {
-  flex: 1;
-  overflow-y: auto;
+.secondary-navbar .default-conversation-title {
+  box-sizing: border-box;
+  /* 20px is from left+right margin */
+  width: calc(100% - 20px);
+  margin: 10px 10px 0px 10px;
+  text-align: left;
+  background-color: transparent;
+  color: var(--color-font);
+
+  display: flex;
+  flex-direction: row;
+  border-radius: 8px;
+  position: relative;
 }
 
-.chat-history::-webkit-scrollbar {
-  width: 3px; /* Adjust the width of the scrollbar */
-  height: 3px; /* Adjust the height of the scrollbar */
+.default-conversation-title:hover {
+  background-color: var(--color-button-darker);
 }
 
-/* Style the track */
-.chat-history::-webkit-scrollbar-track {
-  background-color: var(--color-secondary); /* Set the track background color */
-  border-radius: 2px; /* Add a rounded corner to the track */
-}
+.secondary-navbar .selected-conversation-title {
+  box-sizing: border-box;
+  /* 20px is from left+right margin */
+  width: calc(100% - 20px);
+  margin: 10px 10px 0 10px;
+  text-align: left;
+  background-color: var(--color-button-darker);
+  border-color: rgb(0, 0, 0, 0.2);
+  color: var(--color-font-selected);
 
-/* Style the thumb */
-.chat-history::-webkit-scrollbar-thumb {
-  background-color: var(--color-inactive-text); /* Set the thumb background color */
-  border-radius: 2px; /* Add a rounded corner to the thumb */
-}
-
-.test-virtualized-list {
-  display: flex !important;
-  width: 800px;
+  display: flex;
+  flex-direction: row;
+  border-radius: 8px;
+  position: relative;
 }
