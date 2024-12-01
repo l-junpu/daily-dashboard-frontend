@@ -22,6 +22,7 @@ import { CreateChatView } from "./create-chat";
 import { LLMPrimaryContents } from "./primary-contents";
 import { ScrollViewComponent } from "../../../base-component/scroll-view-component/scroll-view-component";
 import { TitleInfo } from "../../../data/llm-data";
+import { ObjectId } from "bson";
 
 // For Secondary Navbar
 interface ButtonProps {
@@ -44,6 +45,16 @@ const LLMDashboardView = () => {
     if (storedUsername) {
       setUsername(storedUsername);
     }
+    
+    const tempTitles = [];
+    for (let i = 1; i <= 10; i++) {
+      const titleInfo: TitleInfo = {
+        title: `Title ${i}`,
+        id: new ObjectId(),
+      };
+      tempTitles.push(titleInfo);
+    }
+    setTitles(tempTitles)
   }, []);
 
   // Retrieve Titles on Username Update
@@ -52,7 +63,7 @@ const LLMDashboardView = () => {
 
     // We need an async function to await
     const initialize = async () => {
-      await handleGetTitlesFromUserApi(toast, username, setTitles);
+      //await handleGetTitlesFromUserApi(toast, username, setTitles);
     };
 
     // Handle Initial Retrieve Titles

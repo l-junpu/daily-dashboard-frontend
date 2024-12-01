@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 // Markdown
 import rehypeHighlight from "rehype-highlight";
@@ -9,6 +9,7 @@ import { LLMDashboardContext } from "../../../context/llm-dashboard/context";
 import VirtualizedList from "../../../base-component/virtualized-list/virtualized-list";
 import { handleUserPrompt } from "../../../api/llm-dashboard-api";
 import TextArea from "../../../base-component/text-area/text-area";
+import { Message } from "../../../data/llm-data";
 
 interface LLMPrimaryContentsProps {
   toast: any;
@@ -21,7 +22,19 @@ export const LLMPrimaryContents = ({ toast }: LLMPrimaryContentsProps) => {
     return;
   }
 
-  const { messages, activeTitleId, currentPrompt, setCurrentPrompt, awaitingResponse } = context;
+  const { messages, setMessages, activeTitleId, currentPrompt, setCurrentPrompt, awaitingResponse } = context;
+
+  useEffect(() => {
+    const tempMessages = [];
+    for (let i = 1; i <= 30; i++) {
+      const message: Message = {
+        role: i%2==0 ? "chat user" : "chat",
+        content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur consequat, odio sed viverra dictum, velit dui feugiat dui, eu tempus magna velit nec tellus. Nullam vehicula purus elit, nec aliquam turpis auctor id. Morbi ut enim porta, elementum arcu a, condimentum felis. In iaculis vestibulum elit. Etiam cursus gravida ex ac luctus. Donec dictum mattis turpis, id consequat enim rutrum ut. Morbi ligula metus, ultrices at gravida et, venenatis nec diam. Curabitur hendrerit turpis mi, non rutrum felis porta ut. Aenean a ante lorem. Aliquam luctus tempor tellus. Mauris sit amet dui ut urna bibendum blandit."
+      };
+      tempMessages.push(message);
+    }
+    setMessages(tempMessages)
+  }, []);
 
   return (
     <main className="llm-dashboard-contents">
