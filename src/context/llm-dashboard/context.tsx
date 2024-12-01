@@ -34,6 +34,8 @@ export type LLMDashboardContextType = {
   // Conversation Data
   activeTitleId: ObjectId | null;
   setActiveTitleId: (activeTitleId: ObjectId | null) => void;
+  activeMenuId: ObjectId | null;
+  setActiveMenuId: (activeTitleId: ObjectId | null) => void;
   currentPrompt: string;
   setCurrentPrompt: (currentPrompt: string) => void;
   awaitingResponse: boolean;

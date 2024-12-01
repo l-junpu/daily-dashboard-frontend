@@ -34,6 +34,10 @@
   outline: none;
 }
 
+.new-chat-contents .tag-header {
+  color: var(--color-font);
+}
+
 .new-chat-contents .tag-control {
   width: 100%;
   display: flex;

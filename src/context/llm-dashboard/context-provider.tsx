@@ -26,6 +26,7 @@ export const LLMDashboardContextProvider: React.FC<{ children: React.ReactNode }
   // Conversation Data
   const [currentPrompt, setCurrentPrompt] = useState("");
   const [awaitingResponse, setAwaitingResponse] = useState(false);
+  const [activeMenuId, setActiveMenuId] = useState<ObjectId | null>(null);
   const [activeTitleId, setActiveTitleId] = useState<ObjectId | null>(null);
 
   return (
@@ -52,6 +53,8 @@ export const LLMDashboardContextProvider: React.FC<{ children: React.ReactNode }
         setMessages,
         activeTitleId,
         setActiveTitleId,
+        activeMenuId,
+        setActiveMenuId,
         currentPrompt,
         setCurrentPrompt,
         awaitingResponse,

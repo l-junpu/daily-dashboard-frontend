@@ -24,11 +24,14 @@
   flex: 1;
   background: none;
   text-align: left;
+  color: var(--color-font);
+  border: none;
 }
 
 .chat-history .secondary-button-text {
   background: none;
   color: var(--color-font-inactive);
+  border: none;
 }
 
 .chat-history .secondary-button-text:hover {

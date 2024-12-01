@@ -1,18 +1,14 @@
 import "./llm-dashboard.css";
 
 // General use
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useEffect } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import IconButton from "../../../base-component/icon-button/icon-button";
 
-import {
-  handleGetTagsAndDocumentsFromChroma,
-  handleGetTitlesFromUserApi,
-  handleRetrieveConvoHistory,
-} from "../../../api/llm-dashboard-api";
+import { handleGetTagsAndDocumentsFromChroma, handleGetTitlesFromUserApi, handleRetrieveConvoHistory } from "../../../api/llm-dashboard-api";
 
 import { LLMDashboardContext } from "../../../context/llm-dashboard/context";
 import { CreateChatView } from "./create-chat";
@@ -27,17 +23,56 @@ const LLMDashboardView = () => {
     return;
   }
 
-  const { navigate, username, setUsername, createChat, setCreateChat, titles, setTitles, activeTitleId, setActiveTitleId } = context;
+  const { navigate, username, setUsername, createChat, setCreateChat, titles, setTitles, activeTitleId, setActiveTitleId, activeMenuId, setActiveMenuId } = context;
 
   // Testing Menu Popup
-  const [activeMenu, setActiveMenu] = useState(false);
-  const [anchor, setAnchorPoint] = useState({ x: 0, y: 0 });
+  const [menuPosition, setMenuPosition] = useState<{ x: number; y: number } | null>(null);
+  const menuRef = useRef<HTMLDivElement | null>(null);
 
-  const handleToggleMenu = (event: React.MouseEvent<HTMLButtonElement>, status: boolean) => {
-    event.preventDefault();
-    setAnchorPoint({ x: event.clientX, y: event.clientY });
-    setActiveMenu(status);
+  const handleToggleMenu = (event: React.MouseEvent, listItem: TitleInfo) => {
+    const button = event.currentTarget as HTMLButtonElement;
+    const rect = button.getBoundingClientRect();
+
+    setMenuPosition({ x: rect.right, y: rect.top });
+    setActiveMenuId(listItem.id);
   };
+
+  // Reset menu params
+  const closeMenu = () => {
+    setMenuPosition(null);
+    setActiveMenuId(null);
+  };
+
+  // Used to check if we are scrolling - If so, close the menu
+  useEffect(() => {
+    const handleScroll = () => {
+      if (menuPosition) {
+        closeMenu();
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, true);
+    return () => {
+      window.removeEventListener("scroll", handleScroll, true);
+    };
+  }, [menuPosition]);
+
+  // Used to check if we clicked within the menu - If not, close the menu
+  useEffect(() => {
+    const handleOutsideClick = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        closeMenu();
+      }
+    };
+
+    if (menuPosition) {
+      document.addEventListener("mousedown", handleOutsideClick);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, [menuPosition]);
 
   // Retrieve necessary information on initial mount
   useEffect(() => {
@@ -71,12 +106,7 @@ const LLMDashboardView = () => {
         <div className="dashboard-body">
           {/* Redirection to the 2 main applications */}
           <nav className="primary-navbar">
-            <IconButton
-              primaryText="📋"
-              hoverText="Tasks"
-              cssStyle="button"
-              onClick={() => navigate("/dashboard/tasks", { replace: true })}
-            />
+            <IconButton primaryText="📋" hoverText="Tasks" cssStyle="button" onClick={() => navigate("/dashboard/tasks", { replace: true })} />
             <IconButton primaryText="💻" hoverText="LLM" cssStyle="button primary-selected" onClick={() => {}} />
           </nav>
 
@@ -123,7 +153,7 @@ const LLMDashboardView = () => {
                 return item.title;
               }}
               getListItemStyle={(item: TitleInfo) => {
-                return activeTitleId === item.id ? "selected-conversation-title" : "default-conversation-title";
+                return activeTitleId === item.id || activeMenuId === item.id ? "selected-conversation-title" : "default-conversation-title";
               }}
               toggleMenu={handleToggleMenu}
             />
@@ -132,7 +162,16 @@ const LLMDashboardView = () => {
           {/* Main Task Contents */}
           <LLMPrimaryContents toast={toast} />
         </div>
-        {activeMenu && <div style={{ position: "absolute", left: "23rem", top: anchor.y }}>MEOW MEOW</div>}
+        {menuPosition && (
+          <div ref={menuRef} className="title-info-menu" style={{ left: `${menuPosition.x}px`, top: `${menuPosition.y}px` }}>
+            <button type="button" className="menu-button">
+              🔍 More Info
+            </button>
+            <button type="button" className="menu-button delete">
+              🗑️ Delete
+            </button>
+          </div>
+        )}
         {/* Create New Chat Page */}
         {createChat && <CreateChatView toast={toast} />}
       </div>
