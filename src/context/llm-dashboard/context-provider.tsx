@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Message, TitleInfo } from "../../data/llm-data";
 import { ObjectId } from "bson";
@@ -28,6 +28,11 @@ export const LLMDashboardContextProvider: React.FC<{ children: React.ReactNode }
   const [awaitingResponse, setAwaitingResponse] = useState(false);
   const [activeMenuId, setActiveMenuId] = useState<ObjectId | null>(null);
   const [activeTitleId, setActiveTitleId] = useState<ObjectId | null>(null);
+
+  // Menu Data
+  const menuRef = useRef<HTMLDivElement | null>(null);
+  const [menuPosition, setMenuPosition] = useState<{ x: number; y: number } | null>(null);
+  const [showMoreInfo, setShowMoreInfo] = useState(false);
 
   return (
     <LLMDashboardContext.Provider
@@ -59,6 +64,11 @@ export const LLMDashboardContextProvider: React.FC<{ children: React.ReactNode }
         setCurrentPrompt,
         awaitingResponse,
         setAwaitingResponse,
+        menuRef,
+        menuPosition,
+        setMenuPosition,
+        showMoreInfo,
+        setShowMoreInfo,
       }}
     >
       {children}

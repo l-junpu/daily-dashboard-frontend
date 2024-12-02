@@ -40,6 +40,16 @@ export type LLMDashboardContextType = {
   setCurrentPrompt: (currentPrompt: string) => void;
   awaitingResponse: boolean;
   setAwaitingResponse: (awaitingResponse: boolean) => void;
+
+  // Menu Display
+  menuRef: React.MutableRefObject<HTMLDivElement | null>;
+  menuPosition: {
+    x: number;
+    y: number;
+  } | null;
+  setMenuPosition: (pos: { x: number; y: number } | null) => void;
+  showMoreInfo: boolean;
+  setShowMoreInfo: (val: boolean) => void;
 };
 
 export const LLMDashboardContext = React.createContext<LLMDashboardContextType | null>(null);

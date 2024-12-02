@@ -1,20 +1,26 @@
 import "./llm-dashboard.css";
 
 // General use
-import React, { useRef, useState } from "react";
+import React from "react";
 import { useEffect } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import IconButton from "../../../base-component/icon-button/icon-button";
 
-import { handleGetTagsAndDocumentsFromChroma, handleGetTitlesFromUserApi, handleRetrieveConvoHistory } from "../../../api/llm-dashboard-api";
+import {
+  handleGetTagsAndDocumentsFromChroma,
+  handleGetTitlesFromUserApi,
+  handleRetrieveConvoHistory,
+} from "../../../api/llm-dashboard-api";
 
 import { LLMDashboardContext } from "../../../context/llm-dashboard/context";
 import { CreateChatView } from "./create-chat";
 import { LLMPrimaryContents } from "./primary-contents";
 import { ScrollViewComponent } from "../../../base-component/scroll-view-component/scroll-view-component";
 import { TitleInfo } from "../../../data/llm-data";
+import PopupMenu from "./popup-menu";
+import MoreInfo from "./more-info";
 
 const LLMDashboardView = () => {
   const context = React.useContext(LLMDashboardContext);
@@ -23,11 +29,22 @@ const LLMDashboardView = () => {
     return;
   }
 
-  const { navigate, username, setUsername, createChat, setCreateChat, titles, setTitles, activeTitleId, setActiveTitleId, activeMenuId, setActiveMenuId } = context;
-
-  // Testing Menu Popup
-  const [menuPosition, setMenuPosition] = useState<{ x: number; y: number } | null>(null);
-  const menuRef = useRef<HTMLDivElement | null>(null);
+  const {
+    navigate,
+    username,
+    setUsername,
+    createChat,
+    setCreateChat,
+    titles,
+    setTitles,
+    activeTitleId,
+    setActiveTitleId,
+    activeMenuId,
+    setActiveMenuId,
+    setMenuPosition,
+    showMoreInfo,
+    setShowMoreInfo,
+  } = context;
 
   const handleToggleMenu = (event: React.MouseEvent, listItem: TitleInfo) => {
     const button = event.currentTarget as HTMLButtonElement;
@@ -36,43 +53,6 @@ const LLMDashboardView = () => {
     setMenuPosition({ x: rect.right, y: rect.top });
     setActiveMenuId(listItem.id);
   };
-
-  // Reset menu params
-  const closeMenu = () => {
-    setMenuPosition(null);
-    setActiveMenuId(null);
-  };
-
-  // Used to check if we are scrolling - If so, close the menu
-  useEffect(() => {
-    const handleScroll = () => {
-      if (menuPosition) {
-        closeMenu();
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll, true);
-    return () => {
-      window.removeEventListener("scroll", handleScroll, true);
-    };
-  }, [menuPosition]);
-
-  // Used to check if we clicked within the menu - If not, close the menu
-  useEffect(() => {
-    const handleOutsideClick = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        closeMenu();
-      }
-    };
-
-    if (menuPosition) {
-      document.addEventListener("mousedown", handleOutsideClick);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleOutsideClick);
-    };
-  }, [menuPosition]);
 
   // Retrieve necessary information on initial mount
   useEffect(() => {
@@ -106,7 +86,12 @@ const LLMDashboardView = () => {
         <div className="dashboard-body">
           {/* Redirection to the 2 main applications */}
           <nav className="primary-navbar">
-            <IconButton primaryText="📋" hoverText="Tasks" cssStyle="button" onClick={() => navigate("/dashboard/tasks", { replace: true })} />
+            <IconButton
+              primaryText="📋"
+              hoverText="Tasks"
+              cssStyle="button"
+              onClick={() => navigate("/dashboard/tasks", { replace: true })}
+            />
             <IconButton primaryText="💻" hoverText="LLM" cssStyle="button primary-selected" onClick={() => {}} />
           </nav>
 
@@ -162,18 +147,11 @@ const LLMDashboardView = () => {
           {/* Main Task Contents */}
           <LLMPrimaryContents toast={toast} />
         </div>
-        {menuPosition && (
-          <div ref={menuRef} className="title-info-menu" style={{ left: `${menuPosition.x}px`, top: `${menuPosition.y}px` }}>
-            <button type="button" className="menu-button">
-              🔍 More Info
-            </button>
-            <button type="button" className="menu-button delete">
-              🗑️ Delete
-            </button>
-          </div>
-        )}
+        <PopupMenu toast={toast} context={context} />
         {/* Create New Chat Page */}
         {createChat && <CreateChatView toast={toast} />}
+
+        {showMoreInfo && <MoreInfo toast={toast} context={context} />}
       </div>
     </>
   );

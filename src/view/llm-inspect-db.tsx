@@ -6,6 +6,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 
 import IconButton from "../base-component/icon-button/icon-button";
+import { HttpStatusCode } from "axios";
+import RemovableButton from "../base-component/removable-button/removable-button";
 
 // For Secondary Navbar
 interface ButtonProps {
@@ -25,11 +27,15 @@ const LLMInspectDBView = () => {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
 
-  const [searchTag, setSearchTag] = useState("");
-  const [deleteTag, setDeleteTag] = useState(false);
-  const [enableDeleteTagButton, setEnableDeleteTagButton] = useState(false);
-  const [confirmTag, setConfirmTag] = useState("");
-  const [allTags, setAllTags] = useState<string[] | null>([]);
+  const [pageNumber, setPageNumber] = useState(0);
+  const [openFilterPage, setOpenFilterPage] = useState(false);
+
+  const [tags, setTags] = useState<string[]>([]);
+  const [docs, setDocs] = useState<string[]>([]);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [selectedDocs, setSelectedDocs] = useState<string[]>([]);
+  const [activeTag, setActiveTag] = useState("");
+  const [activeDoc, setActiveDoc] = useState("");
 
   const [database, setDatabase] = useState<DatabaseValues[] | null>([
     { source: "VR-Link_5.7_Getting_Started_Guide.pdf", tag: "vr-link", user: "jp", date: "13-10-2024" },
@@ -79,24 +85,56 @@ const LLMInspectDBView = () => {
     }
   }, []);
 
-  // Update addTags when database is updated
+  // Retrieve Tags & Documents
   useEffect(() => {
-    if (!database) return;
+    const FetchTagsAndDocs = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/database/api/retrieve-tags-and-docs/", {
+          method: "GET",
+        });
+        if (!response.ok) {
+          toast.error("Unable to retrieve Tags and Docs from Chroma DB");
+          return;
+        }
 
-    let tags: string[] = [];
-    for (let row of database) {
-      if (tags.find((tag) => tag === row.tag)) continue;
-      tags.push(row.tag);
+        const responseData = await response.json();
+        if (response.status == HttpStatusCode.Ok) {
+          setTags(["", ...responseData.tags]);
+          setDocs(["", ...responseData.docs]);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    FetchTagsAndDocs();
+  }, [openFilterPage]);
+
+  // Function to handle Adding of Tags / Documents from "List"
+  const handleAddRemoveTags = (
+    change: string,
+    setChange: (change: string) => void,
+    oldList: string[],
+    setOldList: (oldList: string[]) => void,
+    newList: string[],
+    setNewList: (newList: string[]) => void
+  ) => {
+    if (change == "") return;
+
+    const index = oldList.indexOf(change);
+    if (index != -1) {
+      // Remove Element from Old List
+      const changedList = [...oldList];
+      changedList.splice(index, 1);
+      setOldList(changedList);
+
+      // Add Element to New List
+      setNewList([...newList.slice(0, 1), change, ...newList.slice(1)]);
+
+      // Reset Change
+      setChange("");
     }
-
-    setAllTags([...tags]);
-  }, [database]);
-
-  // Update addTags when database is updated
-  useEffect(() => {
-    if (allTags?.find((tag) => tag === searchTag)) setEnableDeleteTagButton(true);
-    else setEnableDeleteTagButton(false);
-  }, [searchTag]);
+  };
 
   // Active Buttons
   const secondaryButtonProps: ButtonProps[] = [
@@ -116,25 +154,6 @@ const LLMInspectDBView = () => {
   ];
   const [selectedSecondaryButton, setSelectedSecondaryButton] = useState(1); // Just Highlight 🔍 View Embeddings
 
-  // Handle Delete Tag
-  const handleDeleteTag = (e: React.FormEvent<HTMLFormElement>) => {};
-
-  // Handle Cancel Delete
-  const handleCancelDelete = () => {
-    setConfirmTag("");
-    setDeleteTag(false);
-  };
-
-  // Filter Our Database Rows If Searching For Specific Tags
-  var filteredDatabase: DatabaseValues[] = [];
-  if (database) {
-    if (searchTag != "") {
-      filteredDatabase = database.filter((row) => row.tag.includes(searchTag));
-    } else {
-      filteredDatabase = database;
-    }
-  }
-
   return (
     <div className="dashboard-container">
       <ToastContainer position="bottom-right" />
@@ -145,7 +164,12 @@ const LLMInspectDBView = () => {
       <div className="dashboard-body">
         {/* Redirection to the 2 main applications */}
         <nav className="primary-navbar">
-          <IconButton primaryText="📋" hoverText="Tasks" cssStyle="button" onClick={() => navigate("/dashboard/tasks", { replace: true })} />
+          <IconButton
+            primaryText="📋"
+            hoverText="Tasks"
+            cssStyle="button"
+            onClick={() => navigate("/dashboard/tasks", { replace: true })}
+          />
           <IconButton primaryText="💻" hoverText="LLM" cssStyle="button primary-selected" onClick={() => {}} />
         </nav>
 
@@ -163,16 +187,10 @@ const LLMInspectDBView = () => {
         {/* Main File Upload Contents */}
         <main className="inspect-dashboard-contents">
           <div className="tag-actions">
-            <input type="text" placeholder="Search Tag..." className="search" value={searchTag} onChange={(e) => setSearchTag(e.target.value)} />
-            <button
-              onClick={() => {
-                setDeleteTag(true);
-              }}
-              className={enableDeleteTagButton ? "action-button-cancel" : "action-button-inactive"}
-              disabled={!enableDeleteTagButton}
-            >
-              🗑️ Delete Tag
+            <button className="action-button" onClick={() => setOpenFilterPage(true)}>
+              🌪️ Filter
             </button>
+            <button className="action-button-cancel">🗑️ Clear</button>
           </div>
           <div className="db-table">
             <header className="db-header">
@@ -183,7 +201,7 @@ const LLMInspectDBView = () => {
               <p className="overflow right-border center">Date Added</p>
             </header>
             <div className="db-body">
-              {filteredDatabase.map((row, index) => (
+              {database?.map((row, index) => (
                 <div className="row" key={index}>
                   <p className="overflow center">{index}</p>
                   <a className="overflow center">{row.source}</a>
@@ -194,23 +212,56 @@ const LLMInspectDBView = () => {
               ))}
             </div>
           </div>
+          <div className="db-page-control">
+            <button className="nav-button">{"<<"}</button>
+            <button className="nav-button">{"<"}</button>
+            <span className="page-number">Pg. {pageNumber}</span>
+            <button className="nav-button">{">"}</button>
+            <button className="nav-button">{">>"}</button>
+          </div>
           {/* Delete Tag Page */}
-          {deleteTag && (
-            <form
-              className="delete-tag-container"
-              onSubmit={(e) => {
-                handleDeleteTag(e);
-              }}
-            >
-              <div className="delete-tag-contents">
-                <h2>Delete Tag</h2>
-                <p style={{ marginTop: "8px" }}>To confirm, type "{searchTag}" in the box below</p>
-                <input type="text" name="confirm-delete-tag" className="tag-name" value={confirmTag} onChange={(e) => setConfirmTag(e.target.value)} />
-                <div className="footer">
-                  <button type="submit" className={confirmTag === searchTag ? "action-button" : "action-button-inactive"} disabled={confirmTag !== searchTag}>
-                    Delete Tag
+          {openFilterPage && (
+            <form className="filter-tag-container" onSubmit={(e) => {}}>
+              <div className="filter-tag-contents">
+                <h2>Filter Documents</h2>
+                {/* Adding Document Tags */}
+                <h4 className="tag-header">Add Document Tags</h4>
+                <div className="tag-control">
+                  <select
+                    className="dropdown-box"
+                    onChange={(e) => {
+                      setActiveTag(e.target.value);
+                    }}
+                    value={activeTag}
+                  >
+                    {tags.map((tag, index) => (
+                      <option key={index}>{tag}</option>
+                    ))}
+                  </select>
+                  <button
+                    className="action-button"
+                    type="button"
+                    onClick={() => handleAddRemoveTags(activeTag, setActiveTag, tags, setTags, selectedTags, setSelectedTags)}
+                  >
+                    ✚ Add Tag
                   </button>
-                  <button onClick={() => handleCancelDelete()} className="action-button">
+                </div>
+                {/* Displaying Document Tags */}
+                <div className="tag-display">
+                  {selectedTags.map((tag, index) => (
+                    <RemovableButton
+                      idx={index}
+                      name={tag}
+                      removeItem={() => handleAddRemoveTags(tag, setActiveTag, selectedTags, setSelectedTags, tags, setTags)}
+                    />
+                  ))}
+                </div>
+                <div className="footer">
+                  {/* Footers */}
+                  <button type="submit" className="action-button">
+                    Search
+                  </button>
+                  <button className="action-button-cancel" onClick={() => setOpenFilterPage(false)}>
                     Cancel
                   </button>
                 </div>

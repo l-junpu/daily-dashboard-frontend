@@ -59,6 +59,11 @@ const LLMFileUploadView = () => {
       connectSocket(storedUsername);
     }
 
+    getSocket().disconnect();
+    if (storedUsername) connectSocket(storedUsername);
+    getSocket().on("connected", (data) => {
+      setLastStatus(data.status);
+    });
     getSocket().on("status_update", (data) => {
       setLastStatus(data.status);
     });
@@ -166,7 +171,12 @@ const LLMFileUploadView = () => {
       <div className="dashboard-body">
         {/* Redirection to the 2 main applications */}
         <nav className="primary-navbar">
-          <IconButton primaryText="📋" hoverText="Tasks" cssStyle="button" onClick={() => navigate("/dashboard/tasks", { replace: true })} />
+          <IconButton
+            primaryText="📋"
+            hoverText="Tasks"
+            cssStyle="button"
+            onClick={() => navigate("/dashboard/tasks", { replace: true })}
+          />
           <IconButton primaryText="💻" hoverText="LLM" cssStyle="button primary-selected" onClick={() => {}} />
         </nav>
 
@@ -209,7 +219,11 @@ const LLMFileUploadView = () => {
           </div>
           <div className="footer">
             {/* Rememnber to set uploading here to lock */}
-            <button className={files.length > 0 ? "action-button" : "action-button-inactive"} onClick={() => setUploadFiles(true)} disabled={files.length > 0 ? false : true}>
+            <button
+              className={files.length > 0 ? "action-button" : "action-button-inactive"}
+              onClick={() => setUploadFiles(true)}
+              disabled={files.length > 0 ? false : true}
+            >
               Upload
             </button>
             <button
@@ -234,8 +248,22 @@ const LLMFileUploadView = () => {
             <div className="upload-files-contents">
               <h2>Upload Files for RAG</h2>
               <p style={{ marginTop: "8px" }}>Tag your files, and confirm the tag below</p>
-              <input type="text" name="tag-name" className="tag-name" placeholder="Tag" value={uploadTag} onChange={(e) => setUploadTag(e.target.value)} />
-              <input type="text" name="tag-name" className="tag-name" placeholder="Confirm Tag" value={confirmTag} onChange={(e) => setConfirmTag(e.target.value)} />
+              <input
+                type="text"
+                name="tag-name"
+                className="tag-name"
+                placeholder="Tag"
+                value={uploadTag}
+                onChange={(e) => setUploadTag(e.target.value)}
+              />
+              <input
+                type="text"
+                name="tag-name"
+                className="tag-name"
+                placeholder="Confirm Tag"
+                value={confirmTag}
+                onChange={(e) => setConfirmTag(e.target.value)}
+              />
               <div className="footer">
                 <button type="submit" className={canUploadFiles ? "action-button" : "action-button-inactive"} disabled={!canUploadFiles}>
                   Upload Files

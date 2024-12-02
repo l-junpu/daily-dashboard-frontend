@@ -6,11 +6,7 @@ import { LLMDashboardContextType } from "../context/llm-dashboard/context";
 /*
     Retrieves all Titles from a User - Called when we initially load into LLM Dashboard
 */
-export const handleGetTitlesFromUserApi = async (
-  toast: any,
-  username: string | null,
-  setTitles: (value: TitleInfo[]) => void
-) => {
+export const handleGetTitlesFromUserApi = async (toast: any, username: string | null, setTitles: (value: TitleInfo[]) => void) => {
   if (username === null) return;
 
   try {
@@ -45,11 +41,7 @@ export const handleGetTitlesFromUserApi = async (
 
 */
 // Handle Create Chat
-export const handleCreateChatApi = async (
-  event: React.FormEvent<HTMLFormElement>,
-  toast: any,
-  context: LLMDashboardContextType
-) => {
+export const handleCreateChatApi = async (event: React.FormEvent<HTMLFormElement>, toast: any, context: LLMDashboardContextType) => {
   event.preventDefault();
 
   // Retrieve values from llm-dashboard/context
@@ -127,24 +119,11 @@ async function* decodeStreamToJson(data: ReadableStream<Uint8Array> | null): Asy
 }
 
 // Handle User Sending a Prompt
-export const handleUserPrompt = async (
-  toast: any,
-  context: LLMDashboardContextType,
-  event?: React.FormEvent<HTMLFormElement>
-) => {
+export const handleUserPrompt = async (toast: any, context: LLMDashboardContextType, event?: React.FormEvent<HTMLFormElement>) => {
   if (event) event.preventDefault();
 
-  const {
-    username,
-    currentPrompt,
-    setCurrentPrompt,
-    setAwaitingResponse,
-    messages,
-    setMessages,
-    activeTitleId,
-    titles,
-    setTitles,
-  } = context;
+  const { username, currentPrompt, setCurrentPrompt, setAwaitingResponse, messages, setMessages, activeTitleId, titles, setTitles } =
+    context;
 
   if (!username) return;
 
@@ -275,6 +254,100 @@ export const handleGetTagsAndDocumentsFromChroma = async (toast: any, context: L
         case HttpStatusCode.OK:
           const responseMessages = await response.json();
           // Save tags and documents
+          break;
+        default:
+          toast.error(`Server side error: ${response.status}`);
+          return;
+      }
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+// Handle User Deleting Conversation
+export const handleDeleteConvo = async (toast: any, context: LLMDashboardContextType) => {
+  const { username, titles, setTitles, activeTitleId, setActiveTitleId, setMessages, activeMenuId, setActiveMenuId, setMenuPosition } =
+    context;
+
+  if (!username) return;
+
+  try {
+    // To allow for handling of unloading of Conversations from
+    // Redis in the backend
+    const response = await FetchResponse("http://localhost:8080/delete_convo", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username: username,
+        id: activeMenuId,
+      }),
+    });
+
+    if (response == null) {
+      toast.error("Unable to connect to server");
+      return;
+    } else {
+      switch (response.status) {
+        case HttpStatusCode.OK:
+          const idx = titles.findIndex((title) => title.id === activeMenuId);
+          if (idx != -1) {
+            const newTitles = [...titles.splice(0, idx), ...titles.splice(idx + 1)];
+            setTitles(newTitles);
+            setActiveMenuId(null);
+            setMenuPosition(null);
+
+            if (activeTitleId === activeMenuId) {
+              setActiveTitleId(null);
+              setMessages([]);
+            }
+          } else {
+            toast.error(`Unable to find title to remove from user on frontend`);
+          }
+          break;
+        default:
+          toast.error(`Server side error: ${response.status}`);
+          return;
+      }
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+// Handle User Deleting Conversation
+export const handleGetMoreInfo = async (toast: any, context: LLMDashboardContextType) => {
+  const { username, activeMenuId, setSelectedTags, setSelectedDocs } = context;
+
+  if (!username) return;
+
+  try {
+    // To allow for handling of unloading of Conversations from
+    // Redis in the backend
+    const response = await FetchResponse("http://localhost:8080/get_convo_details", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username: username,
+        id: activeMenuId,
+      }),
+    });
+
+    if (response == null) {
+      toast.error("Unable to connect to server");
+      return;
+    } else {
+      switch (response.status) {
+        case HttpStatusCode.OK:
+          const responseData = await response.json();
+          console.log(responseData.tags);
+          console.log(responseData.docs);
+          setSelectedTags(responseData.tags);
+          setSelectedDocs(responseData.docs);
           break;
         default:
           toast.error(`Server side error: ${response.status}`);

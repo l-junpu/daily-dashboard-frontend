@@ -39,7 +39,7 @@
 .inspect-dashboard-contents .db-table {
   height: 40vh;
   width: 100%;
-  min-width: 900px;
+  /* min-width: 900px; */
   max-width: max(90vw, 900px);
 }
 
@@ -127,15 +127,34 @@
   color: #6c72e2;
 }
 
-/* .overflow {
+.overflow {
   text-wrap: nowrap;
   overflow-x: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-} */
+}
+
+.inspect-dashboard-contents .db-page-control {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+}
+
+.db-page-control .nav-button {
+  font-size: 14px;
+  padding: 0.3rem 0.5rem;
+  background-color: var(--color-button-darker);
+  color: var(--color-font);
+  border: 1px solid var(--color-border);
+  text-wrap: nowrap;
+}
+
+.db-page-control .page-number {
+  margin: 0 30px;
+}
 
 /* Delete Tag Container */
-.dashboard-container .delete-tag-container {
+.dashboard-container .filter-tag-container {
   position: fixed;
   inset: 0;
   display: flex;
@@ -145,29 +164,54 @@
   padding: 30px 40px;
 }
 
-.delete-tag-container .delete-tag-contents {
+.filter-tag-container .filter-tag-contents {
   display: flex;
   flex-direction: column;
   background-color: var(--color-secondary);
   padding: 1.5rem;
   border-radius: 0.5rem;
   width: 28rem;
+  gap: 15px;
 }
 
-.delete-tag-contents .tag-name {
-  margin-top: 8px;
-  padding: 10px;
+.filter-tag-contents .tag-header {
+  color: var(--color-font);
+}
+
+.filter-tag-contents .tag-control {
+  width: 100%;
+  display: flex;
+  gap: 10px;
+}
+
+.filter-tag-contents .dropdown-box {
+  flex: 1;
+  width: 280px;
+  background-color: var(--color-button-darker);
+  border: 1px solid var(--color-border);
+  padding: 12px;
+  color: var(--color-font);
   font-size: 16px;
-
-  border-radius: 10px;
-  border: 1px solid rgb(0, 0, 0, 0.2);
 }
 
-.delete-tag-contents .tag-name:focus {
+.filter-tag-contents .tag-display {
+  display: flex;
+  flex-wrap: wrap;
+  overflow-y: auto;
+  width: 100%;
+  height: auto;
+  max-height: 120px;
+  overflow-y: auto;
+  gap: 6px;
+  background-color: var(--color-secondary);
+  border-radius: 5px;
+}
+
+.filter-tag-contents .tag-name:focus {
   outline: none;
 }
 
-.delete-tag-contents .footer {
+.filter-tag-contents .footer {
   display: flex;
   flex-direction: row;
   justify-content: center;
