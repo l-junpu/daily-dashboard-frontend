@@ -9,3 +9,10 @@ export interface Message {
   role: string;
   content: string;
 }
+
+export interface DatabaseValues {
+  source: string;
+  tag: string;
+  user: string;
+  date: string;
+}

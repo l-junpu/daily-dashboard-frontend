@@ -16,6 +16,7 @@
 
 .inspect-dashboard-contents .tag-actions {
   width: 100%;
+  max-width: max(60vw, 900px);
 
   display: flex;
   flex-direction: row;
@@ -37,10 +38,10 @@
 }
 
 .inspect-dashboard-contents .db-table {
-  height: 40vh;
+  height: fit-content;
   width: 100%;
   /* min-width: 900px; */
-  max-width: max(90vw, 900px);
+  max-width: max(60vw, 900px);
 }
 
 .db-table .center {
@@ -76,8 +77,8 @@
   flex-direction: column;
   min-height: 100px;
   /* 40vh - db-header-height */
-  height: calc(40vh - 45px);
-  overflow-y: scroll;
+  height: fit-content;
+  overflow-y: hidden;
   background-color: var(--color-button-darker);
   color: var(--color-font);
 
@@ -85,22 +86,20 @@
   border-top: none;
 }
 
-.db-body::-webkit-scrollbar {
-  width: 3px; /* Adjust the width of the scrollbar */
-  height: 3px; /* Adjust the height of the scrollbar */
+/* .db-body::-webkit-scrollbar {
+  width: 3px;
+  height: 3px;
 }
 
-/* Style the track */
 .db-body::-webkit-scrollbar-track {
-  background-color: var(--color-secondary); /* Set the track background color */
-  border-radius: 2px; /* Add a rounded corner to the track */
+  background-color: var(--color-secondary);
+  border-radius: 2px;
 }
 
-/* Style the thumb */
 .db-body::-webkit-scrollbar-thumb {
-  background-color: var(--color-inactive-text); /* Set the thumb background color */
-  border-radius: 2px; /* Add a rounded corner to the thumb */
-}
+  background-color: var(--color-inactive-text);
+  border-radius: 2px;
+} */
 
 .db-body .row {
   display: grid;
@@ -123,8 +122,8 @@
 }
 
 .db-body .row a:hover {
-  text-decoration: underline;
-  color: #6c72e2;
+  cursor: pointer;
+  color: #7277e2;
 }
 
 .overflow {

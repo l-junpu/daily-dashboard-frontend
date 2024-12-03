@@ -1,0 +1,32 @@
+.tag-header {
+  color: var(--color-font);
+}
+
+.filter-tag-contents .tag-control {
+  width: 100%;
+  display: flex;
+  gap: 10px;
+}
+
+.filter-tag-contents .dropdown-box {
+  flex: 1;
+  width: 280px;
+  background-color: var(--color-button-darker);
+  border: 1px solid var(--color-border);
+  padding: 12px;
+  color: var(--color-font);
+  font-size: 16px;
+}
+
+.filter-tag-contents .tag-display {
+  display: flex;
+  flex-wrap: wrap;
+  overflow-y: auto;
+  width: 100%;
+  height: auto;
+  max-height: 120px;
+  overflow-y: auto;
+  gap: 6px;
+  background-color: var(--color-secondary);
+  border-radius: 5px;
+}

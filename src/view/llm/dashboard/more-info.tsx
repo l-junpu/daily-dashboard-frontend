@@ -3,6 +3,7 @@ import "./more-info.css";
 import { LLMDashboardContextType } from "../../../context/llm-dashboard/context";
 import { useEffect } from "react";
 import { handleGetMoreInfo } from "../../../api/llm-dashboard-api";
+import DropdownDisplay from "../../../base-component/dropdown-display/dropdown-display";
 
 interface MoreInfoProps {
   toast: any;
@@ -22,36 +23,11 @@ const MoreInfo = ({ toast, context }: MoreInfoProps) => {
   return (
     <div className="more-info-container">
       <div className="more-info-body">
-        <h3>Selected Tags</h3>
         {/* Displaying Document Tags */}
-        {selectedTags && selectedTags.length === 0 ? (
-          <p style={{ marginBottom: "20px" }}>None</p>
-        ) : (
-          <div className="tag-display">
-            {selectedTags.map((tag, index) => (
-              <span className="button" key={index}>
-                {tag}
-              </span>
-            ))}
-          </div>
-        )}
-
+        <DropdownDisplay displayOnly={true} selectedTags={selectedTags} selectedHeader="Selected Tags" />
         <hr className="hr"></hr>
-
-        <h3>Selected Docs</h3>
         {/* Displaying Document Tags */}
-        {selectedDocs && selectedDocs.length === 0 ? (
-          <p style={{ marginBottom: "20px" }}>None</p>
-        ) : (
-          <div className="tag-display">
-            {selectedDocs.map((doc, index) => (
-              <span className="button" key={index}>
-                {doc}
-              </span>
-            ))}
-          </div>
-        )}
-
+        <DropdownDisplay displayOnly={true} selectedTags={selectedDocs} selectedHeader="Selected Docs" />
         <button
           style={{ width: "fit-content", alignSelf: "center" }}
           className="action-button-cancel"

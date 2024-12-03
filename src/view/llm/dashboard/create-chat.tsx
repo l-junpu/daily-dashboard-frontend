@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import "./create-chat.css";
 
 import { LLMDashboardContext } from "../../../context/llm-dashboard/context";
-import RemovableButton from "../../../base-component/removable-button/removable-button";
 import { handleCreateChatApi } from "../../../api/llm-dashboard-api";
 import { HttpStatusCode } from "axios";
+import DropdownDisplay from "../../../base-component/dropdown-display/dropdown-display";
 
 interface CreateChatViewProps {
   toast: any;
@@ -16,11 +16,20 @@ export const CreateChatView = ({ toast }: CreateChatViewProps) => {
     toast.error("Unable to retrieve LLM Dashboar Context");
     return;
   }
-  const { newTitle, setNewTitle, tags, setTags, selectedTags, setSelectedTags, docs, setDocs, selectedDocs, setSelectedDocs, createChat, setCreateChat } = context;
-
-  // Variables used for the Dropdown Component
-  const [activeTag, setActiveTag] = useState("");
-  const [activeDoc, setActiveDoc] = useState("");
+  const {
+    newTitle,
+    setNewTitle,
+    tags,
+    setTags,
+    selectedTags,
+    setSelectedTags,
+    docs,
+    setDocs,
+    selectedDocs,
+    setSelectedDocs,
+    createChat,
+    setCreateChat,
+  } = context;
 
   // Reset Tags & Docs on Reopen
   useEffect(() => {
@@ -53,32 +62,6 @@ export const CreateChatView = ({ toast }: CreateChatViewProps) => {
     FetchTagsAndDocs();
   }, [createChat]);
 
-  // Function to handle Adding of Tags / Documents from "List"
-  const handleAddRemoveTags = (
-    change: string,
-    setChange: (change: string) => void,
-    oldList: string[],
-    setOldList: (oldList: string[]) => void,
-    newList: string[],
-    setNewList: (newList: string[]) => void
-  ) => {
-    if (change == "") return;
-
-    const index = oldList.indexOf(change);
-    if (index != -1) {
-      // Remove Element from Old List
-      const changedList = [...oldList];
-      changedList.splice(index, 1);
-      setOldList(changedList);
-
-      // Add Element to New List
-      setNewList([...newList.slice(0, 1), change, ...newList.slice(1)]);
-
-      // Reset Change
-      setChange("");
-    }
-  };
-
   return (
     <form
       className="create-chat-container"
@@ -88,61 +71,43 @@ export const CreateChatView = ({ toast }: CreateChatViewProps) => {
     >
       <div className="new-chat-contents">
         <h2 style={{ color: "var(--color-font)" }}>Create New Chat</h2>
-        <input type="text" placeholder="New Chat Name" name="title" className="chat-name" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} />
+        <input
+          type="text"
+          placeholder="New Chat Name"
+          name="title"
+          className="chat-name"
+          value={newTitle}
+          onChange={(e) => setNewTitle(e.target.value)}
+        />
 
         {/* Adding Document Tags */}
-        <h4 className="tag-header">Add Document Tags</h4>
-        <div className="tag-control">
-          <select
-            className="dropdown-box"
-            onChange={(e) => {
-              setActiveTag(e.target.value);
-            }}
-            value={activeTag}
-          >
-            {tags.map((tag, index) => (
-              <option key={index}>{tag}</option>
-            ))}
-          </select>
-          <button className="action-button" type="button" onClick={() => handleAddRemoveTags(activeTag, setActiveTag, tags, setTags, selectedTags, setSelectedTags)}>
-            ✚ Add Tag
-          </button>
-        </div>
-
-        {/* Displaying Document Tags */}
-        <div className="tag-display">
-          {selectedTags.map((tag, index) => (
-            <RemovableButton idx={index} name={tag} removeItem={() => handleAddRemoveTags(tag, setActiveTag, selectedTags, setSelectedTags, tags, setTags)} />
-          ))}
-        </div>
+        <DropdownDisplay
+          displayOnly={false}
+          selectedTags={selectedTags}
+          setSelectedTags={setSelectedTags}
+          dropdownHeader="Add Document Tags"
+          addDropdownButton="✚ Add Tag"
+          tags={tags}
+          setTags={setTags}
+        />
 
         {/* Adding Documents */}
-        <h4 className="tag-header">Add Documents</h4>
-        <div className="tag-control">
-          <select
-            className="dropdown-box"
-            onChange={(e) => {
-              setActiveDoc(e.target.value);
-            }}
-            value={activeDoc}
-          >
-            {docs.map((tag, index) => (
-              <option key={index}>{tag}</option>
-            ))}
-          </select>
-          <button className="action-button" type="button" onClick={() => handleAddRemoveTags(activeDoc, setActiveDoc, docs, setDocs, selectedDocs, setSelectedDocs)}>
-            ✚ Add Doc
-          </button>
-        </div>
+        <DropdownDisplay
+          displayOnly={false}
+          selectedTags={selectedDocs}
+          setSelectedTags={setSelectedDocs}
+          dropdownHeader="Add Documents"
+          addDropdownButton="✚ Add Docs"
+          tags={docs}
+          setTags={setDocs}
+        />
 
-        {/* Displaying Documents */}
-        <div className="tag-display">
-          {selectedDocs.map((tag, index) => (
-            <RemovableButton idx={index} name={tag} removeItem={() => handleAddRemoveTags(tag, setActiveDoc, selectedDocs, setSelectedDocs, docs, setDocs)} />
-          ))}
-        </div>
         <div className="footer">
-          <button type="submit" className={newTitle.length > 0 ? "action-button" : "action-button-inactive"} disabled={newTitle.length > 0 ? false : true}>
+          <button
+            type="submit"
+            className={newTitle.length > 0 ? "action-button" : "action-button-inactive"}
+            disabled={newTitle.length > 0 ? false : true}
+          >
             Create Chat
           </button>
           <button

@@ -6,8 +6,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 
 import IconButton from "../base-component/icon-button/icon-button";
-import { HttpStatusCode } from "axios";
-import RemovableButton from "../base-component/removable-button/removable-button";
+import DropdownDisplay from "../base-component/dropdown-display/dropdown-display";
+import { FetchRelevantDocuments, FetchTagsAndDocs } from "../api/llm-inspect-api";
+import { DatabaseValues } from "../data/llm-data";
 
 // For Secondary Navbar
 interface ButtonProps {
@@ -15,67 +16,26 @@ interface ButtonProps {
   onClick: () => void;
 }
 
-// For Database Fields
-interface DatabaseValues {
-  source: string;
-  tag: string;
-  user: string;
-  date: string;
-}
-
 const LLMInspectDBView = () => {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
 
   const [pageNumber, setPageNumber] = useState(0);
+  const [maxPageNumber, setMaxPageNumber] = useState(0);
   const [openFilterPage, setOpenFilterPage] = useState(false);
 
   const [tags, setTags] = useState<string[]>([]);
-  const [docs, setDocs] = useState<string[]>([]);
+  const [users, setUsers] = useState<string[]>([]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [selectedDocs, setSelectedDocs] = useState<string[]>([]);
-  const [activeTag, setActiveTag] = useState("");
-  const [activeDoc, setActiveDoc] = useState("");
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
 
-  const [database, setDatabase] = useState<DatabaseValues[] | null>([
-    { source: "VR-Link_5.7_Getting_Started_Guide.pdf", tag: "vr-link", user: "jp", date: "13-10-2024" },
-    { source: "VR-Link_5.7_Getting_Started.pdf", tag: "tag 2", user: "jp", date: "13-10-2024" },
-    { source: "VR-Link_5.7_Getting_Started.pdf", tag: "tag 2", user: "jp", date: "13-10-2024" },
-    { source: "VR-Link_5.7_Getting_Started.pdf", tag: "tag 2", user: "jp", date: "13-10-2024" },
-    { source: "VR-Link_5.7_Getting_Started.pdf", tag: "tag 2", user: "jp", date: "13-10-2024" },
-    { source: "VR-Link_5.7_Getting_Started.pdf", tag: "tag 2", user: "jp", date: "13-10-2024" },
-    { source: "VR-Link_5.7_Getting_Started.pdf", tag: "tag 2", user: "jp", date: "13-10-2024" },
-    { source: "VR-Link_5.7_Getting_Started.pdf", tag: "tag 2", user: "jp", date: "13-10-2024" },
-    { source: "VR-Link_5.7_Getting_Started.pdf", tag: "tag 2", user: "jp", date: "13-10-2024" },
-    { source: "VR-Link_5.7_Getting_Started.pdf", tag: "tag 2", user: "jp", date: "13-10-2024" },
-    { source: "VR-Link_5.7_Getting_Started.pdf", tag: "tag 2", user: "jp", date: "13-10-2024" },
-    { source: "VR-Link_5.7_Getting_Started.pdf", tag: "tag 2", user: "jp", date: "13-10-2024" },
-    { source: "VR-Link_5.7_Getting.pdf", tag: "tag 3", user: "jp", date: "13-10-2024" },
-    { source: "VR-Link_5.7_Getting.pdf", tag: "tag 3", user: "jp", date: "13-10-2024" },
-    { source: "VR-Link_5.7_Getting.pdf", tag: "tag 3", user: "jp", date: "13-10-2024" },
-    { source: "VR-Link_5.7_Getting.pdf", tag: "tag 3", user: "jp", date: "13-10-2024" },
-    { source: "VR-Link_5.7_Getting.pdf", tag: "tag 3", user: "jp", date: "13-10-2024" },
-    { source: "VR-Link_5.7_Getting.pdf", tag: "tag 3", user: "jp", date: "13-10-2024" },
-    { source: "VR-Link_5.7_Getting.pdf", tag: "tag 3", user: "jp", date: "13-10-2024" },
-    { source: "VR-Link_5.7_Getting.pdf", tag: "tag 3", user: "jp", date: "13-10-2024" },
-    { source: "VR-Link_5.7_Getting.pdf", tag: "tag 3", user: "jp", date: "13-10-2024" },
-    { source: "VR-Link_5.7_Getting.pdf", tag: "tag 3", user: "jp", date: "13-10-2024" },
-    { source: "VR-Link_5.7_Getting.pdf", tag: "tag 3", user: "jp", date: "13-10-2024" },
-    { source: "VR-Link_5.7_Getting.pdf", tag: "tag 3", user: "jp", date: "13-10-2024" },
-    { source: "VR-Link_5.7_Getting.pdf", tag: "tag 3", user: "jp", date: "13-10-2024" },
-    { source: "VR-Link_5.7_Getting.pdf", tag: "tag 3", user: "jp", date: "13-10-2024" },
-    { source: "VR-Link_5.7_Getting.pdf", tag: "tag 3", user: "jp", date: "13-10-2024" },
-    { source: "VR-Link_5.7.pdf", tag: "tag 4", user: "jp", date: "13-10-2024" },
-    { source: "VR-Link_5.7.pdf", tag: "tag 4", user: "jp", date: "13-10-2024" },
-    { source: "VR-Link_5.7.pdf", tag: "tag 4", user: "jp", date: "13-10-2024" },
-    { source: "VR-Link_5.7.pdf", tag: "tag 4", user: "jp", date: "13-10-2024" },
-    { source: "VR-Link_5.7.pdf", tag: "tag 4", user: "jp", date: "13-10-2024" },
-    { source: "VR-Link_5.7.pdf", tag: "tag 4", user: "jp", date: "13-10-2024" },
-    { source: "VR-Link_5.7.pdf", tag: "tag 4", user: "jp", date: "13-10-2024" },
-    { source: "VR-Link_5.7.pdf", tag: "tag 4", user: "jp", date: "13-10-2024" },
-    { source: "VR-Link_5.7.pdf", tag: "tag 4", user: "jp", date: "13-10-2024" },
-    { source: "VR-Link_5.7.pdf", tag: "tag 4", user: "jp", date: "13-10-2024" },
-  ]);
+  const [database, setDatabase] = useState<DatabaseValues[] | null>([]);
+
+  const handleSearchDocuments = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    FetchRelevantDocuments(setDatabase, setMaxPageNumber, selectedTags, selectedUsers, pageNumber, 10);
+    setOpenFilterPage(false);
+  };
 
   // Retrieve necessary information on initial mount
   useEffect(() => {
@@ -83,58 +43,10 @@ const LLMInspectDBView = () => {
     if (storedUsername) {
       setUsername(storedUsername);
     }
+
+    FetchTagsAndDocs(toast, setTags, setUsers);
+    FetchRelevantDocuments(setDatabase, setMaxPageNumber, selectedTags, selectedUsers, pageNumber, 10);
   }, []);
-
-  // Retrieve Tags & Documents
-  useEffect(() => {
-    const FetchTagsAndDocs = async () => {
-      try {
-        const response = await fetch("http://localhost:5000/database/api/retrieve-tags-and-docs/", {
-          method: "GET",
-        });
-        if (!response.ok) {
-          toast.error("Unable to retrieve Tags and Docs from Chroma DB");
-          return;
-        }
-
-        const responseData = await response.json();
-        if (response.status == HttpStatusCode.Ok) {
-          setTags(["", ...responseData.tags]);
-          setDocs(["", ...responseData.docs]);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    FetchTagsAndDocs();
-  }, [openFilterPage]);
-
-  // Function to handle Adding of Tags / Documents from "List"
-  const handleAddRemoveTags = (
-    change: string,
-    setChange: (change: string) => void,
-    oldList: string[],
-    setOldList: (oldList: string[]) => void,
-    newList: string[],
-    setNewList: (newList: string[]) => void
-  ) => {
-    if (change == "") return;
-
-    const index = oldList.indexOf(change);
-    if (index != -1) {
-      // Remove Element from Old List
-      const changedList = [...oldList];
-      changedList.splice(index, 1);
-      setOldList(changedList);
-
-      // Add Element to New List
-      setNewList([...newList.slice(0, 1), change, ...newList.slice(1)]);
-
-      // Reset Change
-      setChange("");
-    }
-  };
 
   // Active Buttons
   const secondaryButtonProps: ButtonProps[] = [
@@ -203,7 +115,7 @@ const LLMInspectDBView = () => {
             <div className="db-body">
               {database?.map((row, index) => (
                 <div className="row" key={index}>
-                  <p className="overflow center">{index}</p>
+                  <p className="overflow center">{index + 1}</p>
                   <a className="overflow center">{row.source}</a>
                   <p className="overflow center">{row.tag}</p>
                   <p className="overflow center">{row.user}</p>
@@ -221,43 +133,34 @@ const LLMInspectDBView = () => {
           </div>
           {/* Delete Tag Page */}
           {openFilterPage && (
-            <form className="filter-tag-container" onSubmit={(e) => {}}>
+            <form
+              className="filter-tag-container"
+              onSubmit={(e) => {
+                handleSearchDocuments(e);
+              }}
+            >
               <div className="filter-tag-contents">
                 <h2>Filter Documents</h2>
-                {/* Adding Document Tags */}
-                <h4 className="tag-header">Add Document Tags</h4>
-                <div className="tag-control">
-                  <select
-                    className="dropdown-box"
-                    onChange={(e) => {
-                      setActiveTag(e.target.value);
-                    }}
-                    value={activeTag}
-                  >
-                    {tags.map((tag, index) => (
-                      <option key={index}>{tag}</option>
-                    ))}
-                  </select>
-                  <button
-                    className="action-button"
-                    type="button"
-                    onClick={() => handleAddRemoveTags(activeTag, setActiveTag, tags, setTags, selectedTags, setSelectedTags)}
-                  >
-                    ✚ Add Tag
-                  </button>
-                </div>
-                {/* Displaying Document Tags */}
-                <div className="tag-display">
-                  {selectedTags.map((tag, index) => (
-                    <RemovableButton
-                      idx={index}
-                      name={tag}
-                      removeItem={() => handleAddRemoveTags(tag, setActiveTag, selectedTags, setSelectedTags, tags, setTags)}
-                    />
-                  ))}
-                </div>
+                <DropdownDisplay
+                  displayOnly={false}
+                  selectedTags={selectedTags}
+                  setSelectedTags={setSelectedTags}
+                  dropdownHeader="Add Document Tags"
+                  addDropdownButton="✚ Add Tag"
+                  tags={tags}
+                  setTags={setTags}
+                />
+                <DropdownDisplay
+                  displayOnly={false}
+                  selectedTags={selectedUsers}
+                  setSelectedTags={setSelectedUsers}
+                  dropdownHeader="Add Users"
+                  addDropdownButton="✚ Add Users"
+                  tags={users}
+                  setTags={setUsers}
+                />
                 <div className="footer">
-                  {/* Footers */}
+                  {/* Footers - Only on click search then do we select  */}
                   <button type="submit" className="action-button">
                     Search
                   </button>
