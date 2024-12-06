@@ -14,6 +14,7 @@ import RemovableButton from "../../../base-component/removable-button/removable-
 import { RiDeleteBinLine } from "react-icons/ri";
 import ConfirmMenu from "../../../base-component/confirm-menu/confirm-menu";
 import DeleteTags from "./delete-tags";
+import FilterTags from "./filter-tags";
 
 // For Secondary Navbar
 interface ButtonProps {
@@ -41,13 +42,6 @@ const LLMInspectDBView = () => {
 
   const [database, setDatabase] = useState<DatabaseValues[] | null>([]);
 
-  const handleSearchDocuments = (event: React.FormEvent<HTMLFormElement> | null, page: number) => {
-    event?.preventDefault();
-    FetchRelevantDocuments(setDatabase, setMaxPageNumber, selectedTags, selectedUsers, page, 10);
-    setPageNumber(page);
-    setOpenFilterPage(false);
-  };
-
   // Retrieve necessary information on initial mount
   useEffect(() => {
     const storedUsername = sessionStorage.getItem("username");
@@ -58,6 +52,17 @@ const LLMInspectDBView = () => {
     FetchTagsAndDocs(toast, setTags, setUsers);
     FetchRelevantDocuments(setDatabase, setMaxPageNumber, selectedTags, selectedUsers, pageNumber, 10);
   }, []);
+
+  useEffect(() => {
+    handleSearchDocuments(0);
+  }, [selectedTags, selectedUsers]);
+
+  const handleSearchDocuments = (page: number) => {
+    event?.preventDefault();
+    FetchRelevantDocuments(setDatabase, setMaxPageNumber, selectedTags, selectedUsers, page, 10);
+    setPageNumber(page);
+    setOpenFilterPage(false);
+  };
 
   // Handling scrolling of the filter for tag-display
   const scrollContainer = document.getElementById("tags-scroll-container");
@@ -234,14 +239,14 @@ const LLMInspectDBView = () => {
             <button
               className={pageNumber === 0 ? "nav-button-disabled" : "nav-button"}
               disabled={pageNumber === 0 ? true : false}
-              onClick={() => handleSearchDocuments(null, 0)}
+              onClick={() => handleSearchDocuments(0)}
             >
               {"<<"}
             </button>
             <button
               className={pageNumber === 0 ? "nav-button-disabled" : "nav-button"}
               disabled={pageNumber === 0 ? true : false}
-              onClick={() => handleSearchDocuments(null, pageNumber - 1)}
+              onClick={() => handleSearchDocuments(pageNumber - 1)}
             >
               {"<"}
             </button>
@@ -249,57 +254,31 @@ const LLMInspectDBView = () => {
             <button
               className={pageNumber === maxPageNumber ? "nav-button-disabled" : "nav-button"}
               disabled={pageNumber === maxPageNumber ? true : false}
-              onClick={() => handleSearchDocuments(null, pageNumber + 1)}
+              onClick={() => handleSearchDocuments(pageNumber + 1)}
             >
               {">"}
             </button>
             <button
               className={pageNumber === maxPageNumber ? "nav-button-disabled" : "nav-button"}
               disabled={pageNumber === maxPageNumber ? true : false}
-              onClick={() => handleSearchDocuments(null, maxPageNumber)}
+              onClick={() => handleSearchDocuments(maxPageNumber)}
             >
               {">>"}
             </button>
           </div>
           {/* Delete Tag Page */}
           {openFilterPage && (
-            <form
-              className="filter-tag-container"
-              onSubmit={(e) => {
-                handleSearchDocuments(e, 0);
-              }}
-            >
-              <div className="filter-tag-contents">
-                <h2>Filter Documents</h2>
-                <DropdownDisplay
-                  displayOnly={false}
-                  selectedTags={selectedTags}
-                  setSelectedTags={setSelectedTags}
-                  dropdownHeader="Add Document Tags"
-                  addDropdownButton="✚ Add Tag"
-                  tags={tags}
-                  setTags={setTags}
-                />
-                <DropdownDisplay
-                  displayOnly={false}
-                  selectedTags={selectedUsers}
-                  setSelectedTags={setSelectedUsers}
-                  dropdownHeader="Add Users"
-                  addDropdownButton="✚ Add Users"
-                  tags={users}
-                  setTags={setUsers}
-                />
-                <div className="footer">
-                  {/* Footers - Only on click search then do we select  */}
-                  <button type="submit" className="action-button">
-                    Search
-                  </button>
-                  <button className="action-button-cancel" onClick={() => setOpenFilterPage(false)}>
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            </form>
+            <FilterTags
+              tags={tags}
+              setTags={setTags}
+              selectedTags={selectedTags}
+              setSelectedTags={setSelectedTags}
+              users={users}
+              setUsers={setUsers}
+              selectedUsers={selectedUsers}
+              setSelectedUsers={setSelectedUsers}
+              setOpenFilterPage={setOpenFilterPage}
+            />
           )}
           {openDeleteTagPage && (
             <DeleteTags
