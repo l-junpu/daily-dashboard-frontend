@@ -30,3 +30,18 @@
   background-color: var(--color-secondary);
   border-radius: 5px;
 }
+
+.tag-display .tag-text {
+  background-color: var(--color-tertiary);
+  border: 2px solid var(--color-border);
+  border-radius: 5px;
+  text-wrap: nowrap;
+  width: 140px;
+
+  font-size: 14px;
+  padding: 6px 6px;
+  overflow-x: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--color-font);
+}

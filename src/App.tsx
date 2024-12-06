@@ -4,7 +4,7 @@ import LoginPageView from "./view/login-page";
 import UserDashboardView from "./view/user-dashboard";
 import LLMDashboardView from "./view/llm/dashboard/llm-dashboard";
 import LLMFileUploadView from "./view/llm-file-upload";
-import LLMInspectDBView from "./view/llm-inspect-db";
+import LLMInspectDBView from "./view/llm/inspect-db/llm-inspect-db";
 import { LLMDashboardContextProvider } from "./context/llm-dashboard/context-provider";
 
 const App = () => {

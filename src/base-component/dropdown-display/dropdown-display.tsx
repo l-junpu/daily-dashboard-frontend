@@ -101,7 +101,7 @@ const DropdownDisplay = ({
         ) : (
           <div className="tag-display">
             {selectedTags.map((tag, index) => (
-              <span className="button" key={index}>
+              <span className="tag-text" key={index}>
                 {tag}
               </span>
             ))}

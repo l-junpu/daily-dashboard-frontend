@@ -15,6 +15,7 @@ export const FetchTagsAndDocs = async (toast: any, setTags: (tags: string[]) => 
     if (response.status == HttpStatusCode.Ok) {
       setTags(["", ...responseData.tags]);
       setUsers(["", ...responseData.users]);
+      console.log("Received tags: ", responseData.tags);
     }
   } catch (error) {
     console.log(error);
@@ -44,7 +45,6 @@ export const FetchRelevantDocuments = async (
     });
     if (response.ok) {
       const data = await response.json();
-      console.log(data);
       setDatabase(data.sources);
       setMaxPageNumber(data.maxPages);
     } else {
@@ -52,6 +52,5 @@ export const FetchRelevantDocuments = async (
     }
   } catch (error) {
     console.log(error);
-    return null;
   }
 };

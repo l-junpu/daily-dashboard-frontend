@@ -1,0 +1,59 @@
+.confirm-container {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.3);
+  padding: 30px 40px;
+}
+
+.confirm-container .confirm-container-contents {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-secondary);
+  border: 1px solid var(--color-border);
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  width: 36rem;
+  gap: 1em;
+}
+
+.confirm-container-contents .secondary-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  gap: 10px;
+}
+
+.secondary-body .confirm-description {
+  width: 100%;
+
+  color: var(--color-font);
+  font-weight: 500;
+  text-align: left;
+}
+
+.secondary-body .confirm-tag {
+  font-size: 16px;
+  padding: 16px 16px;
+  width: 100%;
+  color: var(--color-font);
+  background-color: var(--color-tertiary);
+  border-radius: 10px;
+  border: 1px solid var(--color-border);
+}
+
+.secondary-body .confirm-tag:focus {
+  outline: none;
+}
+
+.confirm-container-contents .primary-body {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+
+  gap: 1em;
+}

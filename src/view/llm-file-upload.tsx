@@ -129,21 +129,11 @@ const LLMFileUploadView = () => {
         body: formData,
       });
 
-      /*
-      Basically here we just sit and wait and receive "Status"
-      from the Python Server until it is done with the following:
-      1. Downloading Files
-      2. Chunking Files
-      3. Embedding Files
-         - Embedding File X out of Y
-      4. Once all 3 tasks are completed, we receive status.ok
-      */
-
       if (response.ok) {
-        console.log("Successfully uploaded files to backend for embedding");
+        toast.success("Successfully uploaded files");
       } else {
-        console.log("Failed to upload files to backend for embedding");
-        console.log(await response.text()); // Log the response text for debugging
+        toast.error("Failed to upload files");
+        console.log(await response.text());
       }
     } catch (error) {
       console.error(error);

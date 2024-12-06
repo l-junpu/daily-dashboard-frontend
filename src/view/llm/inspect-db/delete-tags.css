@@ -1,4 +1,4 @@
-.more-info-container {
+.delete-tags-container {
   position: fixed;
   inset: 0;
   display: flex;
@@ -8,7 +8,7 @@
   padding: 30px 40px;
 }
 
-.more-info-container .more-info-body {
+.delete-tags-container .delete-tags-body {
   display: flex;
   flex-direction: column;
   background-color: var(--color-secondary);
@@ -16,19 +16,30 @@
   padding: 1.5rem;
   border-radius: 0.5rem;
   width: 28rem;
+  gap: 1rem;
+}
+
+.delete-tags-body .tag-control {
+  width: 100%;
+  display: flex;
   gap: 10px;
 }
 
-.more-info-body .hr {
-  border: none;
-  height: 2px;
-  background-color: #ddd;
-  opacity: 0.1;
-  border-radius: 5px;
-  margin-bottom: 15px;
+.tag-control .dropdown-box {
+  flex: 1;
+  width: 280px;
+  background-color: var(--color-button-darker);
+  border: 1px solid var(--color-border);
+  padding: 12px;
+  color: var(--color-font);
+  font-size: 16px;
 }
 
-.more-info-body .tag-display {
+.tag-control .dropdown-box:focus {
+  outline: none;
+}
+
+.delete-tags-body .tag-display {
   display: flex;
   flex-wrap: wrap;
   overflow-y: auto;
@@ -39,5 +50,12 @@
   gap: 6px;
   background-color: var(--color-secondary);
   border-radius: 5px;
-  margin-bottom: 20px;
+}
+
+.delete-tags-body .footer-control {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+
+  gap: 10px;
 }
